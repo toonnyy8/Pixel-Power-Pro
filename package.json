@@ -21,7 +21,6 @@
   "homepage": "https://github.com/toonnyy8/Pixel-Power-Pro#readme",
   "dependencies": {
     "@tensorflow/tfjs": "^1.5.2",
-    "@tensorflow/tfjs-backend-wasm": "^1.5.2-alpha1",
     "core-js": "^3.6.4",
     "parcel": "^1.12.4",
     "pixi.js": "^5.2.1",

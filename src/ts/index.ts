@@ -1,38 +1,72 @@
 import "core-js/stable"
 import "regenerator-runtime/runtime"
 
-import * as tf from '@tensorflow/tfjs';
-import { setWasmPath } from '@tensorflow/tfjs-backend-wasm';
-import { wasmPath } from '../js/file'
+import * as tf from '@tensorflow/tfjs'
+import * as pic from './picture'
 
-setWasmPath(wasmPath); // or tf.wasm.setWasmPath when using <script> tags.
+let rgba = (red: number, green: number, blue: number, alpha: number) => {
+    return `rgba(${red}, ${green}, ${blue}, ${alpha / 255})`
+}
+let scale: number = 100
+
+document.body.style["padding"] = "0"
+document.body.style["margin"] = "0"
+document.body.style["overflow"] = "hidden"
+
+
+let canvas = document.createElement('canvas')
+canvas.width = 10
+canvas.height = 10
+
+canvas.style["image-rendering"] = "pixelated"
+
+console.log(document.body.offsetWidth)
+console.log(document.body.offsetHeight)
+
+document.body.appendChild(canvas)
+
+
+window.onload = () => {
+    if (window.innerWidth < window.innerHeight) {
+        canvas.style.width = `${window.innerWidth * (scale / 100)}px`
+        canvas.style.height = null
+    } else {
+        canvas.style.height = `${window.innerHeight * (scale / 100)}px`
+        canvas.style.width = null
+    }
+}
+window.onresize = () => {
+
+    if (window.innerWidth < window.innerHeight) {
+        canvas.style.width = `${window.innerWidth * (scale / 100)}px`
+        canvas.style.height = null
+    } else {
+        canvas.style.height = `${window.innerHeight * (scale / 100)}px`
+        canvas.style.width = null
+    }
+}
+
+
 tf.setBackend("webgl").then(() => {
     console.log(tf.getBackend())
 
-    tf.tidy(() => {
-        tf.add(
-            tf.tensor([1, 2, 3]),
-            tf.tensor([4, 5, 6])
-        ).print()
+    const imageData = new ImageData(10, 10)
+
+    let p = pic.setPixel(imageData)(255, 0, 255, 20)
+
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j <= i; j++) {
+            p(i, j)
+        }
+    }
+
+    tf.browser.toPixels(
+        tf.browser.fromPixels(imageData, 4),
+        canvas
+    ).then(() => {
+        // tf.browser.fromPixels(canvas, 4).print()
+        console.log(tf.util.now());
     })
-});
-// tf.setBackend('wasm').then(() => {
-//     console.log(tf.getBackend())
 
-//     tf.tidy(() => {
-//         tf.add(
-//             tf.tensor([1, 2, 3]),
-//             tf.tensor([4, 5, 6])
-//         ).print()
-//     })
-// });
 
-import * as PIXI from 'pixi.js'
-
-let app = new PIXI.Application({
-    width: 24, height: 24, backgroundColor: 0x1099bb, resolution: window.devicePixelRatio || 1,
 })
-document.body.appendChild(app.view)
-
-let fps = 120
-app.ticker.speed = fps / 60
