@@ -25,8 +25,10 @@ console.log(document.body.offsetHeight)
 
 document.body.appendChild(canvas)
 
+let unit: number
 
 window.onload = () => {
+    unit = Number(`${canvas.style.height || canvas.style.width}`.split("px")[0]) / (canvas.width)
     if (window.innerWidth < window.innerHeight) {
         canvas.style.width = `${window.innerWidth * (scale / 100)}px`
         canvas.style.height = null
@@ -36,6 +38,7 @@ window.onload = () => {
     }
 }
 window.onresize = () => {
+    unit = Number(`${canvas.style.height || canvas.style.width}`.split("px")[0]) / (canvas.width)
 
     if (window.innerWidth < window.innerHeight) {
         canvas.style.width = `${window.innerWidth * (scale / 100)}px`
@@ -68,5 +71,34 @@ tf.setBackend("webgl").then(() => {
         console.log(tf.util.now());
     })
 
+    canvas.onmousedown = (e) => {
+        console.log(unit)
+        let x = Math.floor(e.clientX / unit)
+        let y = Math.floor(e.clientY / unit)
+        console.log("x", x)
+        console.log("y", y)
 
+        p(x, y)
+
+    }
+    canvas.onmouseup = () => {
+        tf.browser.toPixels(
+            tf.browser.fromPixels(imageData, 4),
+            canvas
+        )
+    }
+    canvas.onmousemove = (e) => {
+        let x = Math.floor(e.clientX / unit)
+        let y = Math.floor(e.clientY / unit)
+        console.log("x", x)
+        console.log("y", y)
+
+        p(x, y)
+
+        // canvas.getContext('2d').putImageData(imageData, 0, 0)
+        tf.browser.toPixels(
+            tf.browser.fromPixels(imageData, 4),
+            canvas
+        )
+    }
 })
