@@ -3,102 +3,116 @@ import "regenerator-runtime/runtime"
 
 import * as tf from '@tensorflow/tfjs'
 import * as pic from './picture'
+import * as system from './system'
 
-let rgba = (red: number, green: number, blue: number, alpha: number) => {
-    return `rgba(${red}, ${green}, ${blue}, ${alpha / 255})`
-}
-let scale: number = 100
 
 document.body.style["padding"] = "0"
 document.body.style["margin"] = "0"
 document.body.style["overflow"] = "hidden"
+document.body.style["align-items"] = "center"
+document.body.style["justify-content"] = "center"
+document.body.style["display"] = "flex"
+document.body.style["backgroundColor"] = "rgba(100, 100, 100,1)"
 
-
-let canvas = document.createElement('canvas')
-canvas.width = 10
-canvas.height = 10
-
-canvas.style["image-rendering"] = "pixelated"
-
-console.log(document.body.offsetWidth)
-console.log(document.body.offsetHeight)
-
-document.body.appendChild(canvas)
-
-let unit: number
+tf.setBackend("webgl")
 
 window.onload = () => {
-    unit = Number(`${canvas.style.height || canvas.style.width}`.split("px")[0]) / (canvas.width)
-    if (window.innerWidth < window.innerHeight) {
-        canvas.style.width = `${window.innerWidth * (scale / 100)}px`
-        canvas.style.height = null
-    } else {
-        canvas.style.height = `${window.innerHeight * (scale / 100)}px`
-        canvas.style.width = null
-    }
-}
-window.onresize = () => {
-    unit = Number(`${canvas.style.height || canvas.style.width}`.split("px")[0]) / (canvas.width)
+    let ss: system.ScreenSystem
+    let scale: number = 100
+    let width: number = 11
+    let height: number = 10
 
-    if (window.innerWidth < window.innerHeight) {
-        canvas.style.width = `${window.innerWidth * (scale / 100)}px`
-        canvas.style.height = null
-    } else {
-        canvas.style.height = `${window.innerHeight * (scale / 100)}px`
-        canvas.style.width = null
-    }
-}
-
-
-tf.setBackend("webgl").then(() => {
-    console.log(tf.getBackend())
-
-    const imageData = new ImageData(10, 10)
-
-    let p = pic.setPixel(imageData)(255, 0, 255, 20)
-
-    for (let i = 0; i < 10; i++) {
-        for (let j = 0; j <= i; j++) {
-            p(i, j)
-        }
-    }
-
-    tf.browser.toPixels(
-        tf.browser.fromPixels(imageData, 4),
-        canvas
-    ).then(() => {
-        // tf.browser.fromPixels(canvas, 4).print()
-        console.log(tf.util.now());
-    })
-
-    canvas.onmousedown = (e) => {
-        console.log(unit)
-        let x = Math.floor(e.clientX / unit)
-        let y = Math.floor(e.clientY / unit)
-        console.log("x", x)
-        console.log("y", y)
-
-        p(x, y)
-
-    }
-    canvas.onmouseup = () => {
-        tf.browser.toPixels(
-            tf.browser.fromPixels(imageData, 4),
-            canvas
+    ss = system.screenSystem(
+        width,
+        height,
+        Math.min(
+            window.innerWidth / width,
+            window.innerHeight / height
         )
-    }
-    canvas.onmousemove = (e) => {
-        let x = Math.floor(e.clientX / unit)
-        let y = Math.floor(e.clientY / unit)
-        console.log("x", x)
-        console.log("y", y)
+    )
 
-        p(x, y)
+    document.body.style["width"] = `${window.innerWidth}px`
+    document.body.style["height"] = `${window.innerHeight}px`
+    document.body.appendChild(ss.container)
 
-        // canvas.getContext('2d').putImageData(imageData, 0, 0)
-        tf.browser.toPixels(
-            tf.browser.fromPixels(imageData, 4),
-            canvas
+    window.onresize = () => {
+        ss.unit = Math.min(
+            window.innerWidth / width,
+            window.innerHeight / height
         )
+        document.body.style["width"] = `${window.innerWidth}px`
+        document.body.style["height"] = `${window.innerHeight}px`
     }
-})
+
+    document.oncontextmenu = function () {
+        window.event.returnValue = false; //將滑鼠右鍵事件取消
+    }
+
+    tf.ready()
+        .then(() => {
+            console.log(tf.getBackend())
+
+            const imageData = new ImageData(width, height)
+
+            let p = pic.setPixel(imageData)(255, 0, 255, 20)
+
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j <= i; j++) {
+                    p(i, j)
+                }
+            }
+            tf.browser.toPixels(
+                tf.browser.fromPixels(imageData, 4),
+                ss.canvases.render
+            ).then(() => {
+                // tf.browser.fromPixels(canvas, 4).print()
+                console.log(tf.util.now());
+            })
+
+            document.onmousedown = (e) => {
+                e.preventDefault()
+
+                let x = e.clientX
+                let y = e.clientY
+                let ssX = ss.x
+                let ssY = ss.y
+                console.log("down")
+                switch (e.button) {
+                    case 0: {
+                        document.onmousemove = () => {
+                            console.log("left")
+                        }
+                        break
+                    }
+                    case 1: {
+                        document.onmousemove = () => {
+                            console.log("middle")
+                        }
+                        break
+                    }
+                    case 2: {
+                        document.onmousemove = (e) => {
+                            console.log("right")
+                            ss.setTranslate(ssX + (e.clientX - x), ssY + (e.clientY - y))
+                        }
+                        break
+                    }
+                    default: {
+                    }
+                }
+            }
+            document.onmouseup = (e) => {
+                document.onmousemove = null
+            }
+            document.onmouseleave = (e) => {
+                document.onmousemove = null
+            }
+            document.onwheel = (e) => {
+                scale += e.deltaY > 0 ? -15 : 15;
+                scale = Math.min(Math.max(scale, 50), 200)
+                ss.setScale(scale / 100);
+            }
+        })
+}
+
+
