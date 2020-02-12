@@ -91,20 +91,25 @@ export class ScreenSystem {
     }
     _drawForeGrid() {
         let ctx = this.canvases.foreGrid.getContext("2d")
-        ctx.clearRect(0, 0, this.width * this.unit * 3, this.height * this.unit * 3)
+        let _w = this.canvases.foreGrid.width
+        let _h = this.canvases.foreGrid.height
+
+        ctx.clearRect(0, 0, _w, _h)
 
         ctx.fillStyle = "rgba(0,0,0,1)"
         ctx.lineWidth = 4 / this.scale
 
         ctx.beginPath()
 
+        let _u = _w / this.width
+
         for (let i = 0; i <= this.width; i++) {
-            ctx.moveTo(i * this.unit * 3, 0)
-            ctx.lineTo(i * this.unit * 3, this.height * this.unit * 3)
+            ctx.moveTo(i * _u, 0)
+            ctx.lineTo(i * _u, _h)
         }
         for (let i = 0; i <= this.height; i++) {
-            ctx.moveTo(0, i * this.unit * 3)
-            ctx.lineTo(this.width * this.unit * 3, i * this.unit * 3)
+            ctx.moveTo(0, i * _u)
+            ctx.lineTo(_w, i * _u)
         }
         ctx.closePath();
 
@@ -131,6 +136,7 @@ export class ScreenSystem {
     }
 
     set unit(unit: number) {
+        console.log(unit)
         this._unit = unit
 
         this.container.style.width = `${this.width * this.unit}px`

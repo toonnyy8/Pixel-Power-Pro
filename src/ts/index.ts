@@ -5,43 +5,33 @@ import * as tf from '@tensorflow/tfjs'
 import * as pic from './picture'
 import * as system from './system'
 
-
-document.body.style["padding"] = "0"
-document.body.style["margin"] = "0"
-document.body.style["overflow"] = "hidden"
-document.body.style["align-items"] = "center"
-document.body.style["justify-content"] = "center"
-document.body.style["display"] = "flex"
-document.body.style["backgroundColor"] = "rgba(100, 100, 100,1)"
-
 tf.setBackend("webgl")
 
 window.onload = () => {
+    let drawer = document.getElementById("drawer")
+
     let ss: system.ScreenSystem
     let scale: number = 100
-    let width: number = 11
+    let width: number = 10
     let height: number = 10
 
     ss = system.screenSystem(
         width,
         height,
         Math.min(
-            window.innerWidth / width,
-            window.innerHeight / height
+            drawer.offsetWidth / width,
+            drawer.offsetHeight / height
         )
     )
-
-    document.body.style["width"] = `${window.innerWidth}px`
-    document.body.style["height"] = `${window.innerHeight}px`
-    document.body.appendChild(ss.container)
+    drawer.appendChild(ss.container)
 
     window.onresize = () => {
+        console.log(drawer.offsetWidth)
+        ss.unit = 0
         ss.unit = Math.min(
-            window.innerWidth / width,
-            window.innerHeight / height
+            drawer.offsetWidth / width,
+            drawer.offsetHeight / height
         )
-        document.body.style["width"] = `${window.innerWidth}px`
-        document.body.style["height"] = `${window.innerHeight}px`
     }
 
     document.oncontextmenu = function () {
@@ -69,7 +59,7 @@ window.onload = () => {
                 console.log(tf.util.now());
             })
 
-            document.onmousedown = (e) => {
+            drawer.onmousedown = (e) => {
                 e.preventDefault()
 
                 let x = e.clientX
@@ -79,19 +69,19 @@ window.onload = () => {
                 console.log("down")
                 switch (e.button) {
                     case 0: {
-                        document.onmousemove = () => {
+                        drawer.onmousemove = () => {
                             console.log("left")
                         }
                         break
                     }
                     case 1: {
-                        document.onmousemove = () => {
+                        drawer.onmousemove = () => {
                             console.log("middle")
                         }
                         break
                     }
                     case 2: {
-                        document.onmousemove = (e) => {
+                        drawer.onmousemove = (e) => {
                             console.log("right")
                             ss.setTranslate(ssX + (e.clientX - x), ssY + (e.clientY - y))
                         }
@@ -101,13 +91,13 @@ window.onload = () => {
                     }
                 }
             }
-            document.onmouseup = (e) => {
-                document.onmousemove = null
+            drawer.onmouseup = (e) => {
+                drawer.onmousemove = null
             }
-            document.onmouseleave = (e) => {
-                document.onmousemove = null
+            drawer.onmouseleave = (e) => {
+                drawer.onmousemove = null
             }
-            document.onwheel = (e) => {
+            drawer.onwheel = (e) => {
                 scale += e.deltaY > 0 ? -15 : 15;
                 scale = Math.min(Math.max(scale, 50), 200)
                 ss.setScale(scale / 100);
