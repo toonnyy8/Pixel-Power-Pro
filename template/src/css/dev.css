@@ -1,0 +1,50 @@
+@tailwind base;
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow: overlay;
+    @apply .overflow-x-hidden;
+}
+
+@tailwind components;
+
+@tailwind utilities;
+
+.scale-25 {
+    --transform-scale-x: .25;
+    --transform-scale-y: .25;
+}
+
+.scale-200 {
+    --transform-scale-x: 2;
+    --transform-scale-y: 2;
+}
+
+.w-tool-1 {
+    width: 96px;
+}
+
+.w-tool-2 {
+    width: calc(2 * 96px);
+}
+
+.w-tool-3 {
+    width: calc(3 * 96px);
+}
+
+.w-tool-4 {
+    width: calc(4 * 96px);
+}
+
+.w-tool-5 {
+    width: calc(5 * 96px);
+}
+
+.h-tool-1 {
+    height: 96px;
+}
