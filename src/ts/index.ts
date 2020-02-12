@@ -98,6 +98,8 @@ window.onload = () => {
                 drawer.onmousemove = null
             }
             drawer.onwheel = (e) => {
+                e.preventDefault()
+
                 scale += e.deltaY > 0 ? -15 : 15;
                 scale = Math.min(Math.max(scale, 50), 200)
                 ss.setScale(scale / 100);

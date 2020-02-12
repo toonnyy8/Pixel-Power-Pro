@@ -5,37 +5,36 @@
     <script src="./src/ts/index.ts" defer></script>
     <style>
         @import url(./src/css/index.css);
+
+        ::-webkit-scrollbar {
+            width: 20px;
+            height: 20px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: rgba(0, 0, 0, 0);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 50% 0 0 50%;
+            background-color: rgb(0, 165, 187);
+        }
     </style>
 </head>
 
 <body>
-    <div class="h-screen w-screen">
-        <div class="flex flex-row h-full">
-            <div id="tooler" class="flex-none text-gray-700 text-center bg-gray-400 w-tool-1 z-10">
-                <button class="bg-white py-1 px-2">more</button>
-            </div>
-            <div class="flex-auto">
-
-                <div class="flex flex-col h-full">
-                    <div class="flex-auto">
-
-                        <div class="flex flex-row h-full">
-                            <div id="layer" class="flex-none text-gray-700 text-center bg-gray-600 w-tool-1 z-10">layer
-                            </div>
-                            <div class="flex-1 bg-gray-800">
-                                <div id="drawer" class="flex items-center justify-center h-full z-0">
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div id="timer" class="flex-none text-gray-700 text-center bg-gray-600 h-tool-1 w-full z-10">timer
-                    </div>
-                </div>
-
-            </div>
-        </div>
+    <button
+        class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 fixed z-20 right-12 bottom-12">B</button>
+    <div id="timer&layer" class="relative h-screen w-screen bg-white z-10">
+        <div id="timer&layer" class="w-full h-full"></div>
     </div>
+    <div class="relative h-screen w-screen bg-gray-800 z-0">
+        <div id="drawer" class="flex items-center justify-center w-full h-full"></div>
+    </div>
+    <div id="tooler" class="relative h-screen w-screen bg-white z-10">
+        <div id="tooler" class="w-full h-full"></div>
+    </div>
+
 </body>
 
 </html>
