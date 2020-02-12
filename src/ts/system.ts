@@ -23,6 +23,7 @@ export class ScreenSystem {
         this._scale = 1
         this._x = 0
         this._y = 0
+        this._isShowGrid = true
 
         this.canvases = {
             backGrid: createCanvas(this.width, this.height),
@@ -50,15 +51,18 @@ export class ScreenSystem {
         this.container.appendChild(this.canvases.foreGrid)
 
         this._drawBackGrid()
-        this._drawForeGrid()
-        console.log(this.canvases.foreGrid)
+        if (this.isShowGrid) {
+            this._drawForeGrid()
+        }
     }
 
     setScale(scale: number) {
         this._scale = scale
         this.container.style.transform = `translate(${this.x}px,${this.y}px) scale(${this.scale})`
 
-        this._drawForeGrid()
+        if (this.isShowGrid) {
+            this._drawForeGrid()
+        }
     }
     setTranslate(x: number, y: number) {
         this._x = x
@@ -69,6 +73,15 @@ export class ScreenSystem {
         this._x = x
         this._y = y
         this.container.style.transform = `translate(${this.x}px,${this.y}px) scale(${this.scale})`
+    }
+    showGrid(isShowGrid: boolean) {
+        this._isShowGrid = isShowGrid
+        if (this.isShowGrid) {
+            this._drawForeGrid()
+        } else {
+            let ctx = this.canvases.foreGrid.getContext("2d")
+            ctx.clearRect(0, 0, this.canvases.foreGrid.width, this.canvases.foreGrid.height)
+        }
     }
     _drawBackGrid() {
         let ctx = this.canvases.backGrid.getContext("2d")
@@ -93,27 +106,31 @@ export class ScreenSystem {
         let ctx = this.canvases.foreGrid.getContext("2d")
         let _w = this.canvases.foreGrid.width
         let _h = this.canvases.foreGrid.height
+        let _u = _w / this.width
+        let _draw = () => {
+            ctx.beginPath()
 
+            for (let i = 0; i <= this.width; i++) {
+                ctx.moveTo(i * _u, 0)
+                ctx.lineTo(i * _u, _h)
+            }
+            for (let i = 0; i <= this.height; i++) {
+                ctx.moveTo(0, i * _u)
+                ctx.lineTo(_w, i * _u)
+            }
+            ctx.closePath();
+
+            ctx.stroke()
+        }
         ctx.clearRect(0, 0, _w, _h)
 
-        ctx.fillStyle = "rgba(0,0,0,1)"
-        ctx.lineWidth = 4 / this.scale
+        ctx.strokeStyle = "rgba(255,255,255,1)"
+        ctx.lineWidth = 3 / this.scale / (this.unit / _u)
+        _draw()
 
-        ctx.beginPath()
-
-        let _u = _w / this.width
-
-        for (let i = 0; i <= this.width; i++) {
-            ctx.moveTo(i * _u, 0)
-            ctx.lineTo(i * _u, _h)
-        }
-        for (let i = 0; i <= this.height; i++) {
-            ctx.moveTo(0, i * _u)
-            ctx.lineTo(_w, i * _u)
-        }
-        ctx.closePath();
-
-        ctx.stroke()
+        ctx.strokeStyle = "rgba(0,0,0,1)"
+        ctx.lineWidth = 1 / this.scale / (this.unit / _u)
+        _draw()
     }
 
     get width() {
@@ -134,15 +151,19 @@ export class ScreenSystem {
     get y() {
         return this._y
     }
+    get isShowGrid() {
+        return this._isShowGrid
+    }
 
     set unit(unit: number) {
-        console.log(unit)
         this._unit = unit
 
         this.container.style.width = `${this.width * this.unit}px`
         this.container.style.height = `${this.height * this.unit}px`
 
-        this._drawForeGrid()
+        if (this.isShowGrid) {
+            this._drawForeGrid()
+        }
     }
 
     _width: number
@@ -151,6 +172,7 @@ export class ScreenSystem {
     _scale: number
     _x: number
     _y: number
+    _isShowGrid: boolean
 
     container: HTMLDivElement
 

@@ -26,7 +26,6 @@ window.onload = () => {
     drawer.appendChild(ss.container)
 
     window.onresize = () => {
-        console.log(drawer.offsetWidth)
         ss.unit = 0
         ss.unit = Math.min(
             drawer.offsetWidth / width,
@@ -44,7 +43,7 @@ window.onload = () => {
 
             const imageData = new ImageData(width, height)
 
-            let p = pic.setPixel(imageData)(255, 0, 255, 20)
+            let p = pic.setPixel(imageData)(0, 0, 0, 255)
 
             for (let i = 0; i < width; i++) {
                 for (let j = 0; j <= i; j++) {
@@ -75,6 +74,7 @@ window.onload = () => {
                         break
                     }
                     case 1: {
+                        ss.showGrid(!ss.isShowGrid)
                         drawer.onmousemove = () => {
                             console.log("middle")
                         }
