@@ -7,8 +7,34 @@ import * as system from './system'
 
 tf.setBackend("webgl")
 
+let vh = (height: number) => `${height}vh`
+
+let drawerHeight = vh(50)
+
 window.onload = () => {
+    let setting = document.getElementById("setting")
+    let timerAndLayer = document.getElementById("timer&layer")
+    let tooler = document.getElementById("tooler")
+
+    let frozen = document.getElementById("frozen")
+
+    document.addEventListener('keydown', (e) => {
+        e.preventDefault()
+        if (e.keyCode == 32) {
+            if (frozen.classList.contains("z-40")) {
+                frozen.classList.remove("z-40")
+                frozen.classList.add("z-0")
+                document.body.classList.add("overflow-y-hidden")
+            } else {
+                frozen.classList.remove("z-0")
+                frozen.classList.add("z-40")
+                document.body.classList.remove("overflow-y-hidden")
+            }
+
+        }
+    })
     let drawer = document.getElementById("drawer")
+    drawer.style.height = drawerHeight
 
     let ss: system.ScreenSystem
     let scale: number = 100
@@ -103,6 +129,16 @@ window.onload = () => {
                 scale += e.deltaY > 0 ? -15 : 15;
                 scale = Math.min(Math.max(scale, 50), 200)
                 ss.setScale(scale / 100);
+            }
+
+            setting.onwheel = (e) => {
+                e.preventDefault()
+            }
+            timerAndLayer.onwheel = (e) => {
+                e.preventDefault()
+            }
+            tooler.onwheel = (e) => {
+                e.preventDefault()
             }
         })
 }
