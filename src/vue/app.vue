@@ -14,7 +14,7 @@
 		@click="_frozen"
 	>F</button>
 	<setting></setting>
-	<timerAndLayer :height="page.tlHeight"></timerAndLayer>
+	<frameAndLayer :height="page.flHeight"></frameAndLayer>
 	<drawer :height="page.drawerHeight" :image="image"></drawer>
 	<tooler></tooler>
 </body>
@@ -24,22 +24,25 @@
 import Vue from "vue";
 
 import setting from "./page/setting.vue";
-import timerAndLayer from "./page/timer&layer.vue";
+import frameAndLayer from "./page/frame&layer.vue";
 import drawer from "./page/drawer.vue";
 import tooler from "./page/tooler.vue";
+
+import { FL } from "../ts/frame&layer";
 
 export default {
 	components: {
 		setting: setting,
-		timerAndLayer: timerAndLayer,
+		frameAndLayer: frameAndLayer,
 		drawer: drawer,
 		tooler: tooler
 	},
 	data() {
 		return {
 			frozen: false,
-			page: { tlHeight: 50, drawerHeight: 50 },
+			page: { flHeight: 50, drawerHeight: 50 },
 			image: { width: 10, height: 10 }
+			// FL:new FL(10,10)
 		};
 	},
 	created() {
