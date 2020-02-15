@@ -2,71 +2,9 @@
 <html>
 
 <head>
-    <script src="./src/ts/index.ts" defer></script>
-    <style>
-        @import url(./src/css/index.css);
-
-        ::-webkit-scrollbar {
-            width: 20px;
-            height: 20px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background-color: rgba(0, 0, 0, 0);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            border-radius: 50% 0 0 50%;
-            background-color: rgb(0, 165, 187);
-        }
-
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            overflow: auto;
-        }
-
-        .bg-blue-100-t {
-            background-color: #ebf8ff55;
-        }
-    </style>
+    <script src="./src/js/index.js" defer></script>
 </head>
 
-<body class="overflow-x-hidden">
-    <div id="frozen" class="flex fixed h-screen w-screen z-40 bg-transparent bg-blue-100-t"></div>
-    <button id="F"
-        class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 fixed z-30 right-0 bottom-0 mr-6 mb-12">B</button>
-    <button
-        class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 fixed z-50 left-0 top-0 ml-6 mt-12">F</button>
-    <div id="setting" class="relative h-screen w-screen bg-white z-20">
-    </div>
-    <div id="timer&layer" class="relative h-screen w-screen bg-white z-20">
-    </div>
-    <div id="drawer" class="relative h-screen w-screen bg-gray-800 z-10 flex items-center justify-center">
-    </div>
-    <div id="tooler" class="relative flex flex-wrap bg-white z-20 pl-12 pr-40">
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-        <button class="rounded-full h-24 w-24 flex items-center justify-center bg-gray-600 m-3">P</button>
-
-    </div>
-</body>
+<body id=app></body>
 
 </html>
