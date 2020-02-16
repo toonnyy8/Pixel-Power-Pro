@@ -13,9 +13,15 @@ idb.openDB("ppp", 1, {
     upgrade: (db) => {
         console.log("upgradeDB")
         db.createObjectStore('FL')
+        db.createObjectStore('setting')
+        db.createObjectStore('tool')
     }
 }).then((db) => {
     const store = db.transaction('FL', "readwrite").objectStore('FL');
     store.add(new ImageData(10, 10), 1);
+    return db
+}).then((db) => {
+
+}).then((db) => {
     new Vue(App).$mount("#app")
 })
