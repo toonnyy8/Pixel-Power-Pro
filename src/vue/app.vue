@@ -41,12 +41,13 @@ export default {
 		return {
 			frozen: false,
 			page: { flHeight: 50, drawerHeight: 50 },
-			image: { width: 10, height: 10 }
-			// FL:new FL(10,10)
+			image: { width: 10, height: 10 },
+			FL: new FL(10, 10, 1, 1)
 		};
 	},
-	created() {
-		this;
+	created() {},
+	mounted() {
+		console.log(this.FL);
 	},
 	methods: {
 		_frozen() {
