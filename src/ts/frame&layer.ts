@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js'
+
 export class FL {
     constructor(width: number, height: number, frames: number, layers: number, fps: number = 15) {
         this._frames = frames
@@ -103,5 +105,98 @@ export class FL {
                 }
             }
         }
+    }
+}
+
+export class FLUI {
+    constructor(parent: HTMLElement) {
+        this._app = new PIXI.Application({ backgroundColor: 0x1099bb, resizeTo: parent });
+        parent.appendChild(this.app.view)
+
+        this.frames = []
+        this.layers = []
+
+        let imageData = new ImageData(50, 50)
+        for (let i = 0; i < imageData.data.length; i++) {
+            imageData.data[i] = 255
+        }
+    }
+
+    bindFL(fl: FL) {
+        for (let f = 0; f < fl.frames; f++) {
+            this.frames[f] = this.frames[f] || {
+                container: new PIXI.Container(),
+                subContainers: []
+            }
+            for (let l = 0; l < fl.layers; l++) {
+                this.frames[f].subContainers[l] = this.frames[f].subContainers[l] || new PIXI.Container()
+                this.appPic(fl.getPic(f, l), f, l)
+            }
+            this.frames[f].container.addChild(...this.frames[f].subContainers)
+        }
+
+        for (let l = 0; l < fl.layers; l++) {
+            this.layers[l] = this.layers[l] || {
+                container: new PIXI.Container(),
+                subContainers: []
+            }
+            for (let f = 0; f < fl.frames; f++) {
+                this.layers[l].subContainers[f] = this.layers[l].subContainers[f] || new PIXI.Container()
+            }
+            this.layers[l].container.addChild(...this.layers[l].subContainers)
+        }
+    }
+
+    appPic(imageData: ImageData, frame: number, layer: number) {
+        if (this._picSprites[frame][layer] == null || this._picSprites[frame][layer] == undefined) {
+            let picTexture = PIXI.Texture.fromBuffer(new Uint8Array(imageData.data.buffer), imageData.width, imageData.height)
+            let picSprite = new PIXI.Sprite(picTexture)
+
+            picSprite.interactive = true;
+            picSprite.buttonMode = true;
+
+            picSprite.anchor.set(0.5);
+            picSprite.x = 200;
+            picSprite.y = 100
+
+
+            picSprite.addListener("pointerdown", (e) => {
+                console.log(e)
+            })
+
+            this.app.stage.addChild(picSprite);
+        } else {
+            this.updatePic(imageData, frame, layer)
+        }
+    }
+
+    updatePic(imageData: ImageData, frame: number, layer: number) {
+        this._picSprites[frame][layer].texture.destroy(true)
+        this._picSprites[frame][layer].texture = PIXI.Texture.fromBuffer(new Uint8Array(imageData.data.buffer), imageData.width, imageData.height)
+    }
+
+    removePic(frame: number, layer: number) {
+        this._picSprites[frame][layer].destroy({
+            children: true,
+            texture: true,
+            baseTexture: true
+        })
+    }
+
+    _app: PIXI.Application
+    _picSprites: Array<Array<PIXI.Sprite>>
+
+    frames: Array<{
+        container: PIXI.Container
+        subContainers: Array<PIXI.Container>
+    }>
+    layers: Array<{
+        container: PIXI.Container
+        subContainers: Array<PIXI.Container>
+    }>
+
+
+    get app() {
+        return this._app
     }
 }
