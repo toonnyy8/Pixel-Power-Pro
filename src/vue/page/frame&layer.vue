@@ -3,15 +3,16 @@
 </template>
 
 <script>
-import { FLUI } from "../../ts/frame&layer";
+import { FLUI, FL } from "../../ts/frame&layer";
 
 export default {
-	props: { height: Number },
+	props: { height: Number, fl: FL },
 	data() {
-		return {};
+		return { flUI: new FLUI() };
 	},
 	mounted() {
-		new FLUI(this.$refs["frame&layer"]);
+		this.fl.registerUI(this.flUI);
+		this.flUI.bindView(this.$refs["frame&layer"]);
 	},
 	computed: {
 		pageHeight() {

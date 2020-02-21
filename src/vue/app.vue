@@ -14,7 +14,7 @@
 		@click="_frozen"
 	>F</button>
 	<setting></setting>
-	<frameAndLayer :height="page.flHeight"></frameAndLayer>
+	<frameAndLayer :height="page.flHeight" :fl="fl"></frameAndLayer>
 	<drawer :height="page.drawerHeight" :image="image"></drawer>
 	<tooler></tooler>
 </body>
@@ -42,12 +42,12 @@ export default {
 			frozen: false,
 			page: { flHeight: 50, drawerHeight: 50 },
 			image: { width: 10, height: 10 },
-			FL: new FL(10, 10, 1, 1)
+			fl: new FL(10, 10, 1, 1)
 		};
 	},
 	created() {},
 	mounted() {
-		console.log(this.FL);
+		console.log(this.fl);
 	},
 	methods: {
 		_frozen() {
