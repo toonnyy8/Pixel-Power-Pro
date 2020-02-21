@@ -248,6 +248,10 @@ export class FLUI {
         element.appendChild(this._app.view)
     }
 
+    _FL_initPosition() {
+
+    }
+
     _app: PIXI.Application
     _container: PIXI.Container
     _sprites: Array<Array<PIXI.Sprite>>
