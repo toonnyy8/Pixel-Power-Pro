@@ -89,7 +89,8 @@ export class FL {
 
         this._flUIs.forEach(_flUI => {
             let frame = new Array(this.layers).fill(null).map(() => new PIXI.Sprite())
-            _flUI._sprites.splice(at, 0, frame)
+            frame.forEach(_sprite => _sprite.texture.destroy(true))
+            _flUI._pic.sprites.splice(at, 0, frame)
         })
 
         this._frames += 1
@@ -104,9 +105,9 @@ export class FL {
             }
 
             this._flUIs.forEach(_flUI => {
-                let frame = _flUI._sprites.slice(from, from + 1)[0]
-                _flUI._sprites.splice(from, 1)
-                _flUI._sprites.splice(to, 0, frame)
+                let frame = _flUI._pic.sprites.slice(from, from + 1)[0]
+                _flUI._pic.sprites.splice(from, 1)
+                _flUI._pic.sprites.splice(to, 0, frame)
             })
 
         }
@@ -116,8 +117,8 @@ export class FL {
         this._pictures.splice(at, 1)
 
         this._flUIs.forEach(_flUI => {
-            let frame = _flUI._sprites.splice(at, 1)[0]
-            frame.forEach(_sprite => _sprite.destroy({ children: true, texture: true, baseTexture: true }))
+            let framePics = _flUI._pic.sprites.splice(at, 1)[0]
+            framePics.forEach(_sprite => _sprite.destroy({ children: true, texture: true, baseTexture: true }))
         })
 
         this._frames -= 1
@@ -128,9 +129,16 @@ export class FL {
             this._pictures[f].splice(at, 0, null)
 
             this._flUIs.forEach(_flUI => {
-                _flUI._sprites[f].splice(at, 0, new PIXI.Sprite())
+                let _sprite = new PIXI.Sprite()
+                _sprite.texture.destroy(true)
+                _flUI._pic.sprites[f].splice(at, 0, _sprite)
             })
         }
+        this._flUIs.forEach(_flUI => {
+            let _sprite = new PIXI.Sprite()
+            _sprite.texture.destroy(true)
+            _flUI._thumbnail.layer.sprites.splice(at, 0, _sprite)
+        })
         this._layers += 1
     }
 
@@ -143,11 +151,16 @@ export class FL {
                     this._pictures[f].splice(to, 0, layer)
                 }
                 this._flUIs.forEach(_flUI => {
-                    let layer = _flUI._sprites[f].slice(from, from + 1)[0]
-                    _flUI._sprites[f].splice(from, 1)
-                    _flUI._sprites[f].splice(to, 0, layer)
+                    let layer = _flUI._pic.sprites[f].slice(from, from + 1)[0]
+                    _flUI._pic.sprites[f].splice(from, 1)
+                    _flUI._pic.sprites[f].splice(to, 0, layer)
                 })
             }
+            this._flUIs.forEach(_flUI => {
+                let layer = _flUI._thumbnail.layer.sprites.slice(from, from + 1)[0]
+                _flUI._thumbnail.layer.sprites.splice(from, 1)
+                _flUI._thumbnail.layer.sprites.splice(to, 0, layer)
+            })
         }
     }
 
@@ -156,10 +169,15 @@ export class FL {
             this._pictures[f].splice(at, 1)
 
             this._flUIs.forEach(_flUI => {
-                let layer = _flUI._sprites[f].splice(at, 1)[0]
-                layer.destroy({ children: true, texture: true, baseTexture: true })
+                let layerPic = _flUI._pic.sprites[f].splice(at, 1)[0]
+                layerPic.destroy({ children: true, texture: true, baseTexture: true })
             })
         }
+
+        this._flUIs.forEach(_flUI => {
+            let layerPic = _flUI._thumbnail.layer.sprites.splice(at, 1)[0]
+            layerPic.destroy()
+        })
         this._layers -= 1
     }
 
@@ -193,15 +211,18 @@ export class FLUI {
     constructor() {
         this._app = new PIXI.Application({ backgroundColor: 0xaaccff })
 
-        this._sprites = []
-        this._container = new PIXI.Container()
+        this._pic.sprites = []
+        this._pic.container = new PIXI.Container()
+
+        this.now.frame = 0
+        this.now.layer = 0
     }
     _FL_setFL(fl: FL) {
         if (this._fl) {
             this._fl.deregisterUI(this)
         }
 
-        this._sprites.forEach(
+        this._pic.sprites.forEach(
             _layerSprites => {
                 _layerSprites.forEach(
                     _sprite => {
@@ -214,27 +235,60 @@ export class FLUI {
                 )
             }
         )
+        this._thumbnail.frame.sprites.forEach(
+            _sprite => {
+                _sprite.destroy({
+                    children: true,
+                    texture: true,
+                    baseTexture: true
+                })
+            }
+        )
+        this._thumbnail.layer.sprites.forEach(
+            _sprite => {
+                _sprite.destroy({
+                    children: true,
+                    texture: true,
+                    baseTexture: true
+                })
+            }
+        )
 
-        this._sprites.length = fl.frames
+        this._pic.sprites.length = fl.frames
         for (let f = 0; f < fl.frames; f++) {
-            this._sprites[f] = this._sprites[f] || []
-            this._sprites[f].length = fl.layers
+            this._pic.sprites[f] = this._pic.sprites[f] || []
+            this._pic.sprites[f].length = fl.layers
             for (let l = 0; l < fl.layers; l++) {
                 let _texture = fl.pictures[f][l] ? PIXI.Texture.fromBuffer(
                     new Uint8Array(fl.pictures[f][l].data.buffer),
                     fl.pictures[f][l].width,
                     fl.pictures[f][l].height
                 ) : null
-                this._sprites[f][l] = new PIXI.Sprite(_texture)
-                this._container.addChild(this._sprites[f][l])
+                this._pic.sprites[f][l] = new PIXI.Sprite(_texture)
+                this._pic.container.addChild(this._pic.sprites[f][l])
             }
         }
+
+        this._thumbnail.frame.sprites.length = fl.frames
+        for (let f = 0; f < fl.frames; f++) {
+            this._thumbnail.frame.sprites[f] = new PIXI.Sprite()
+            this._thumbnail.frame.sprites[f].texture.destroy(true)
+            this._thumbnail.frame.container.addChild(this._thumbnail.frame.sprites[f])
+        }
+
+        this._thumbnail.layer.sprites.length = fl.layers
+        for (let f = 0; f < fl.layers; f++) {
+            this._thumbnail.layer.sprites[f] = new PIXI.Sprite()
+            this._thumbnail.layer.sprites[f].texture.destroy(true)
+            this._thumbnail.layer.container.addChild(this._thumbnail.frame.sprites[f])
+        }
+
         this._fl = fl
     }
 
     _FL_setSprite(pic: ImageData, frame: number, layer: number) {
-        this._sprites[frame][layer].texture.destroy(true)
-        this._sprites[frame][layer].texture = pic ? PIXI
+        this._pic.sprites[frame][layer].texture.destroy(true)
+        this._pic.sprites[frame][layer].texture = pic ? PIXI
             .Texture
             .fromBuffer(
                 new Uint8Array(pic.data.buffer),
@@ -253,7 +307,24 @@ export class FLUI {
     }
 
     _app: PIXI.Application
-    _container: PIXI.Container
-    _sprites: Array<Array<PIXI.Sprite>>
+    _pic: {
+        container: PIXI.Container
+        sprites: Array<Array<PIXI.Sprite>>
+    }
+
+    _thumbnail: {
+        frame: {
+            container: PIXI.Container
+            sprites: Array<PIXI.Sprite>
+        }
+        layer: {
+            container: PIXI.Container
+            sprites: Array<PIXI.Sprite>
+        }
+    }
     _fl: FL
+    now: {
+        frame: number
+        layer: number
+    }
 }
