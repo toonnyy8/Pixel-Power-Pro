@@ -1,5 +1,6 @@
 import "core-js/stable"
 import "regenerator-runtime/runtime"
+// import "../ts/test"
 
 import * as idb from "idb"
 import Vue from 'vue'
