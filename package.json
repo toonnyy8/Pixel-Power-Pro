@@ -23,9 +23,11 @@
   "dependencies": {
     "@tensorflow/tfjs": "^1.5.2",
     "core-js": "^3.6.4",
+    "eruda": "^2.2.0",
     "idb": "^5.0.1",
     "immutable": "^4.0.0-rc.12",
     "parcel": "^1.12.4",
+    "path": "^0.12.7",
     "pixi.js": "^5.2.1",
     "regenerator-runtime": "^0.13.3",
     "tailwindcss": "^1.2.0",

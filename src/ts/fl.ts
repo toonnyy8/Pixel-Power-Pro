@@ -5,6 +5,10 @@ import * as Immutable from "immutable"
 
 export class FL {
     constructor(width: number, height: number, fps: number = 15) {
+        let id = privateFLs.findIndex((v) => v === null)
+        id = id == -1 ? privateFLs.size : id
+        Object.defineProperty(this, 'id', { get: () => id });
+
         this._frames = 1
         this._layers = 1
         this._width = width
@@ -64,6 +68,12 @@ export class FL {
         }
     }
 }
+
+class PrivateFL {
+
+}
+
+let privateFLs: Immutable.List<PrivateFL> = Immutable.List.of(null)
 
 export class FLUI {
     constructor() {
