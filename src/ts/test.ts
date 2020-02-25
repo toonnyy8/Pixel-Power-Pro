@@ -1,7 +1,8 @@
-import eruda from "eruda"
-eruda.init();
-
 import * as Immutable from "immutable"
+import eruda from "eruda"
+import erudaDom from "eruda-dom"
+eruda.init();
+eruda.add(erudaDom)
 
 export class FL {
     constructor() {
@@ -46,7 +47,7 @@ fl_ = Immutable.Map.of(
     )
 );
 let a: Immutable.List<ImageData> = <Immutable.List<ImageData>>fl_.get("b");
-a
+
 console.log(
     (<Immutable.List<ImageData>>fl_.get("b"))
 )

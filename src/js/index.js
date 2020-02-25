@@ -1,7 +1,9 @@
 import "core-js/stable"
 import "regenerator-runtime/runtime"
 import eruda from "eruda"
+import erudaDom from "eruda-dom"
 eruda.init();
+eruda.add(erudaDom)
 
 import "../ts/test"
 // import * as idb from "idb"
