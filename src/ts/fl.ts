@@ -94,24 +94,40 @@ export class FLUI {
 
     _app: PIXI.Application
 
-    _thumbnail: {
-        pic: {
-            container: PIXI.Container
-            sprites: Immutable.List<Immutable.List<PIXI.Sprite>>
+    _thumbnail:{
+        pic:{
+            container:PIXI.Container
+            sprites:Immutable.List<Immutable.List<PIXI.Sprite>>
         }
-        frame: {
-            container: PIXI.Container
-            sprites: Immutable.List<PIXI.Sprite>
+        frame:{
+            container:PIXI.Container
+            sprites:Immutable.List<PIXI.Sprite>
         }
-        layer: {
-            container: PIXI.Container
-            sprites: Immutable.List<PIXI.Sprite>
+        layer:{
+            container:PIXI.Container
+            sprites:Immutable.List<PIXI.Sprite>
         }
     }
-    _fl: FL
-    _now: {
-        frame: number
-        layer: number
+    _fl:FL
+    _now:{
+        frame:number
+        layer:number
+    }
+    render(fl:FL){
+        fl.pictures.forEach((pics,frame)=>{
+            pics.forEach((pic,layer)=>{
+                (<PIXI.Sprite>this._thumbnail.pic.sprites.getIn([frame,layer])).destroy({
+                    baseTexture:true,
+                    children:true,
+                    texture:true
+                })
+                (<PIXI.Sprite>this._thumbnail.pic.sprites.setIn([frame,layer],new PIXI.Sprite(new PIXI.Texture.from(
+                    new Uint8Array(pic.data.buffer),
+                    pic.width,
+                    pic.height
+                )))
+            })
+        })
     }
 }
 
