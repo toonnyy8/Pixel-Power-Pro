@@ -30,7 +30,7 @@ export class FL {
     private _pictures: Immutable.List<Immutable.List<ImageData>>
     private _overlaps: Immutable.List<ImageData>
     private _fps: number
-    private _flUIs: Array<FLUI>
+    private _flUIs: Immutable.List<FLUI>
 
     get frames() {
         return this._frames
@@ -95,6 +95,9 @@ export class FL {
 
     moveFrame(from: number, to: number) {
         this._pictures = this.pictures.remove(from).insert(to, this.pictures.get(from))
+        this._flUIs.forEach((flUI)=>{
+            flUI._thumbnail.pic.sprites = flUI._thumbnail.pic.sprites.remove(from).insert(to,flUI._thumbnail.pic.sprites.get(from))
+        })
     }
     moveLayer(from: number, to: number) {
         this._pictures = this.pictures.map((pics) => {
