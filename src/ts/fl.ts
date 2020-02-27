@@ -2,6 +2,12 @@ import * as PIXI from 'pixi.js'
 import * as tfc from '@tensorflow/tfjs-core'
 import * as Immutable from "immutable"
 
+let freezeImageData = (imageData: ImageData) => {
+    let cloneImageData = new ImageData(imageData.width, imageData.height)
+    cloneImageData.data.set(imageData.data.slice())
+    Object.freeze(cloneImageData)
+    return cloneImageData
+}
 
 export class FL {
     constructor(width: number, height: number, fps: number = 15) {
@@ -67,6 +73,43 @@ export class FL {
             this._flUIs.splice(at, 1)
         }
     }
+
+    addFrame(at: number) {
+        let imageData = new ImageData(this.width, this.height)
+        this._pictures = this.pictures.insert(
+            at,
+            Immutable.List.of(
+                ...new Array(this.layers).fill(
+                    freezeImageData(imageData)
+                )
+            )
+        )
+    }
+    addLayer(at: number) {
+        let imageData = freezeImageData(new ImageData(this.width, this.height))
+
+        this._pictures = this.pictures.map((pics) => {
+            return pics.insert(at, imageData)
+        })
+    }
+
+    moveFrame(from: number, to: number) {
+        this._pictures = this.pictures.remove(from).insert(to, this.pictures.get(from))
+    }
+    moveLayer(from: number, to: number) {
+        this._pictures = this.pictures.map((pics) => {
+            return pics.remove(from).insert(to, pics.get(from))
+        })
+    }
+
+    removeFrame(at: number) {
+        this._pictures = this.pictures.remove(at)
+    }
+    removeLayer(at: number) {
+        this._pictures = this.pictures.map((pics) => {
+            return pics.remove(at)
+        })
+    }
 }
 
 class PrivateFL {
@@ -94,38 +137,44 @@ export class FLUI {
 
     _app: PIXI.Application
 
-    _thumbnail:{
-        pic:{
-            container:PIXI.Container
-            sprites:Immutable.List<Immutable.List<PIXI.Sprite>>
+    _thumbnail: {
+        pic: {
+            container: PIXI.Container
+            sprites: Immutable.List<Immutable.List<PIXI.Sprite>>
         }
-        frame:{
-            container:PIXI.Container
-            sprites:Immutable.List<PIXI.Sprite>
+        frame: {
+            container: PIXI.Container
+            sprites: Immutable.List<PIXI.Sprite>
         }
-        layer:{
-            container:PIXI.Container
-            sprites:Immutable.List<PIXI.Sprite>
+        layer: {
+            container: PIXI.Container
+            sprites: Immutable.List<PIXI.Sprite>
         }
     }
-    _fl:FL
-    _now:{
-        frame:number
-        layer:number
+    _fl: FL
+    _now: {
+        frame: number
+        layer: number
     }
-    render(fl:FL){
-        fl.pictures.forEach((pics,frame)=>{
-            pics.forEach((pic,layer)=>{
-                (<PIXI.Sprite>this._thumbnail.pic.sprites.getIn([frame,layer])).destroy({
-                    baseTexture:true,
-                    children:true,
-                    texture:true
-                })
-                (<PIXI.Sprite>this._thumbnail.pic.sprites.setIn([frame,layer],new PIXI.Sprite(new PIXI.Texture.from(
-                    new Uint8Array(pic.data.buffer),
-                    pic.width,
-                    pic.height
-                )))
+    render(fl: FL) {
+        fl.pictures.forEach((pics, frame) => {
+            pics.forEach((pic, layer) => {
+                (<PIXI.Sprite>this._thumbnail.pic.sprites.getIn([frame, layer]))
+                    .destroy({
+                        baseTexture: true,
+                        children: true,
+                        texture: true
+                    })
+                this._thumbnail.pic.sprites.setIn(
+                    [frame, layer],
+                    new PIXI.Sprite(
+                        PIXI.Texture.fromBuffer(
+                            new Uint8Array(pic.data.buffer),
+                            pic.width,
+                            pic.height
+                        )
+                    )
+                )
             })
         })
     }
