@@ -103,10 +103,25 @@ export class FL {
         this._pictures = this.pictures.map((pics) => {
             return pics.remove(from).insert(to, pics.get(from))
         })
+        this._flUIs.forEach((flUI)=>{
+            flUI._thumbnail.pic.sprites = flUI._thumbnail.pic.sprites.map((sprites)=>{
+                return sprites.remove(from).insert(to,sprites.get(from))
+            })
+        })
     }
 
     removeFrame(at: number) {
         this._pictures = this.pictures.remove(at)
+        this._flUIs.forEach((flUI)=>{
+            flUI._thumbnail.pic.sprites.get(at).forEach((sprite)=>{
+                sprite.destroy({
+                    baseTexture:true,
+                    children:true,
+                    texture:true
+                })
+            })
+            flUI._thumbnail.pic.sprites = flUI._thumbnail.pic.sprites.remove(at)
+        })
     }
     removeLayer(at: number) {
         this._pictures = this.pictures.map((pics) => {
