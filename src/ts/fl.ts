@@ -84,12 +84,44 @@ export class FL {
                 )
             )
         )
+
+        this._flUIs.forEach((flUI)=>{
+            flUI._thumbnail.pic.sprites = flUI._thumbnail.pic.sprites.insert(
+                at,
+                Immutable.List.of(
+                    ...new Array(this.layers).fill(null).map(()=>{
+                        return new PIXI.Sprite(
+                            PIXI.Texture.fromBuffer(
+                                new Uint8Array(imageData.data.buffer),
+                                imageData.width,
+                                imageData.height
+                            )
+                        )
+                    })
+                )
+            )
+        })
     }
     addLayer(at: number) {
         let imageData = freezeImageData(new ImageData(this.width, this.height))
 
         this._pictures = this.pictures.map((pics) => {
             return pics.insert(at, imageData)
+        })
+
+        this._flUIs.forEach((flUI)=>{
+            flUI._thumbnail.pic.sprites = flUI._thumbnail.pic.sprites.map((sprites)=>{
+                return sprites.insert(
+                    at,
+                    new PIXI.Sprite(
+                        PIXI.Texture.fromBuffer(
+                            new Uint8Array(imageData.data.buffer),
+                            imageData.width,
+                            imageData.height
+                        )
+                    )
+                )
+            })
         })
     }
 
@@ -126,6 +158,16 @@ export class FL {
     removeLayer(at: number) {
         this._pictures = this.pictures.map((pics) => {
             return pics.remove(at)
+        })
+        this._flUIs.forEach((flUI)=>{
+            flUI._thumbnail.pic.sprites = flUI._thumbnail.pic.sprites.map((sprites)=>{
+                sprites.get(at).destroy({
+                    baseTexture:true,
+                    children:true,
+                    texture:true
+                })
+                return sprites.remove(at)
+            })
         })
     }
 }

@@ -9,11 +9,11 @@ import "../ts/test"
 // import * as idb from "idb"
 // import Vue from 'vue'
 // import App from '../vue/app.vue'
-
+//
 // document.oncontextmenu = () => {
 //     window.event.returnValue = false; //將滑鼠右鍵事件取消
 // }
-
+//
 // idb.openDB("ppp", 1, {
 //     upgrade: (db) => {
 //         console.log("upgradeDB")
@@ -26,7 +26,7 @@ import "../ts/test"
 //     store.add(new ImageData(10, 10), 1);
 //     return db
 // }).then((db) => {
-
+//
 // }).then((db) => {
 //     new Vue(App).$mount("#app")
 // })

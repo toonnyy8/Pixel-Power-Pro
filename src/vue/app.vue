@@ -40,7 +40,7 @@ export default {
 	data() {
 		return {
 			frozen: false,
-			page: { flHeight: 50, drawerHeight: 50 },
+			page: { flHeight: 25, drawerHeight: 50 },
 			image: { width: 10, height: 10 },
 			fl: new FL(10, 10, 1, 1)
 		};
