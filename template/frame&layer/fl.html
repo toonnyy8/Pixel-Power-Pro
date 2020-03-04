@@ -19,80 +19,50 @@
             background-color: rgb(0, 165, 187);
         }
 
-        .w-px._32 {
-            width: 24px;
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
         }
 
-        .w-px._64 {
-            width: 64px;
+        .ddd::-webkit-scrollbar-track {
+            background-color: rgba(0, 78, 131, 0.288);
         }
 
-        .w-px._128 {
-            width: 128px;
+        .ddd::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background-color: rgb(0, 165, 187);
         }
 
-        .w-px._256 {
-            width: 256px;
+        .w-px-72 {
+            width: 72px;
         }
 
-        .w-px._512 {
-            width: 512px;
+        .h-px-72 {
+            height: 72px;
         }
 
-        .w-px._1024 {
-            width: 1024px;
-        }
-
-        #myDiv ul {
-            list-style: none;
-            border: 1px solid black;
-            width: 350px;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            /* 超過範圍隱藏 */
-            white-space: nowrap;
-            /* 不斷行 */
-        }
-
-        #myDiv ul li {
-            display: inline;
-            /* 水平排列 */
+        .h-px-72-add-1 {
+            height: calc(72px + 1rem);
         }
     </style>
 
 </head>
 
 <body>
-    <div id="myDiv">
-        <ul>
-            <li>
-                <div class="inline-block w-px _128 h-24 bg-orange-100"></div>
-            </li>
-            <li>
-                <div class="inline-block w-px _128 h-24 bg-orange-200 "></div>
-            </li>
-            <li>
-                <div class="inline-block w-px _128 h-24 bg-orange-300 "></div>
-            </li>
-            <li>
-                <div class="inline-block w-px _128 h-24 bg-orange-400 "></div>
-            </li>
-        </ul>
-    </div>
     <!-- <div class="inline-flex bg-gray-200 w-24 overflow-y-visible overflow-x-scroll">
         <div class="flex-1 text-gray-700 text-center bg-gray-400 w-64 px-4 py-2 m-2"></div>
         <div class="flex-1 text-gray-700 text-center bg-gray-400 px-4 py-2 m-2">2</div>
         <div class="flex-1 text-gray-700 text-center bg-gray-400 px-4 py-2 m-2">3</div>
     </div> -->
     <div>
-        <div draggable="true" class="bg-gray-500 h-64 w-3/4 whitespace-no-wrap overflow-y-visible overflow-x-scroll">
-            <div draggable="true" class="inline-block  bg-orange-100 w-px _512 h-24"></div>
-            <div draggable="true" class="inline-block  bg-orange-300 w-px _512 h-24"></div>
-            <div draggable="true" class="inline-block  bg-orange-500 w-px _512 h-24"></div>
+        <div draggable="true"
+            class="bg-gray-500 h-auto w-3/4 whitespace-no-wrap overflow-x-visible overflow-y-hidden ddd">
+            <div draggable="true" class="inline-block bg-orange-100 w-px-72 h-px-72 m-1"></div>
+            <div draggable="true" class="inline-block bg-orange-300 w-px-72 h-px-72 m-1"></div>
+            <div draggable="true" class="inline-block bg-orange-500 w-px-72 h-px-72 m-1"></div>
         </div>
-        <div draggable="true" class="bg-red-500 h-24 w-3/4"></div>
-        <div draggable="true" class="bg-blue-500 h-24 w-3/4"></div>
+        <div draggable="true" class="bg-red-500 whitespace-no-wrap w-3/4"></div>
+        <!-- <div draggable="true" class="bg-blue-500 h-24 w-3/4"></div> -->
     </div>
 
 </body>
