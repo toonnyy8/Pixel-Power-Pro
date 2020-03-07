@@ -8,4 +8,4 @@ import fs from 'fs';
 //     new Blob([
 //         wasm
 //     ], { type: "application/wasm" })
-)
+// )
