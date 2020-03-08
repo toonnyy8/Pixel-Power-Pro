@@ -1,28 +1,25 @@
 <template>
 <body class="bg-gray-200 ml-4">
 	<div v-for="(layerImageData,frame) in frameImageData" :key="frame">
-		<button class="rounded h-2 w-11/12 my-1" v-bind:class="`bg-teal-${Math.abs(frame%4-2)*2+4}00`"></button>
+		<button class="rounded h-6 w-6 my-2" v-bind:class="`bg-teal-${Math.abs(frame%4-2)*2+4}00`"></button>
 		<div
 			class="shadow-lg bg-white rounded h-auto w-11/12 whitespace-no-wrap overflow-x-visible overflow-y-hidden ddd"
 		>
 			<button class="w-px-72 h-px-72 border-t-2 border-b-2 border-r-2 border-black rounded-r-lg"></button>
 			<div v-for="(imageData,layer) in layerImageData" :key="layer" class="inline-block">
-				<button
-					class="rounded w-2 h-px-72 ml-2 my-1"
-					v-bind:class="`bg-orange-${Math.abs(layer%4-2)+4}00`"
-				></button>
+				<button class="rounded w-6 h-4 ml-2 my-1" v-bind:class="`bg-orange-${Math.abs(layer%4-2)+4}00`"></button>
 				<button class="w-px-72 h-px-72 ml-2 my-1">
 					<img :src="toURL(imageData)" class="rounded border-2 border-black" />
 				</button>
 			</div>
 			<button
-				class="rounded w-2 h-px-72 ml-2 my-1 mr-2"
+				class="rounded w-6 h-4 ml-2 my-1 mr-2"
 				v-bind:class="`bg-orange-${Math.abs(layerImageData.length%6-3)+4}00`"
 			></button>
 		</div>
 	</div>
 	<button
-		class="rounded h-2 w-11/12 my-1"
+		class="rounded h-6 w-6 my-2"
 		v-bind:class="`bg-teal-${Math.abs(frameImageData.length%4-2)*2+4}00`"
 	></button>
 </body>
@@ -148,8 +145,8 @@ interface MessageEventDataOfFL {
 }
 
 ::-webkit-scrollbar {
-	width: 10px;
-	height: 10px;
+	width: 5px;
+	height: 5px;
 }
 
 .ddd::-webkit-scrollbar-track {
