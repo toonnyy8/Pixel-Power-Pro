@@ -4,6 +4,7 @@
 <head>
     <style>
         @import url(../src/css/index.css);
+        @import url(../src/css/icon.css);
 
         ::-webkit-scrollbar {
             width: 10px;
@@ -44,11 +45,15 @@
         .h-px-72-add-1 {
             height: calc(72px + 1rem);
         }
+
+        .outline-none.outline-none {
+            outline: 0;
+        }
     </style>
 
 </head>
 
-<body>
+<body class="outline-none">
     <div>
         <div
             class="shadow-lg border-2 border-gray-200 rounded h-auto w-3/4 whitespace-no-wrap overflow-x-visible overflow-y-hidden ddd">
@@ -74,6 +79,10 @@
         </div>
     </div>
 
+    <button
+        class="outline-none outline-none rounded-lg w-32 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg">
+        <i class="text-xl material-icons not-italic text-white">add</i>
+    </button>
 </body>
 
 </html>
