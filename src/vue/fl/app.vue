@@ -1,28 +1,5 @@
 <template>
 <body class="bg-gray-200">
-	<!-- <div v-for="(layerImageData,frame) in frameImageData" :key="frame">
-		<button class="rounded h-6 w-6 my-2" v-bind:class="`bg-teal-${Math.abs(frame%4-2)*2+4}00`"></button>
-		<div
-			class="shadow-lg bg-white rounded h-auto w-11/12 whitespace-no-wrap overflow-x-visible overflow-y-hidden ddd"
-		>
-			<button class="w-px-72 h-px-72 border-t-2 border-b-2 border-r-2 border-black rounded-r-lg"></button>
-			<div v-for="(imageData,layer) in layerImageData" :key="layer" class="inline-block">
-				<button class="rounded w-6 h-4 ml-2 my-1" v-bind:class="`bg-orange-${Math.abs(layer%4-2)+4}00`"></button>
-				<button class="w-px-72 h-px-72 ml-2 my-1">
-					<img :src="toURL(imageData)" class="rounded border-2 border-black" />
-				</button>
-			</div>
-			<button
-				class="rounded w-6 h-4 ml-2 my-1 mr-2"
-				v-bind:class="`bg-orange-${Math.abs(layerImageData.length%6-3)+4}00`"
-			></button>
-		</div>
-	</div>
-	<button
-		class="rounded h-6 w-6 my-2"
-		v-bind:class="`bg-teal-${Math.abs(frameImageData.length%4-2)*2+4}00`"
-	></button>-->
-
 	<div class="outline-none whitespace-no-wrap flex p-8">
 		<div class="flex" v-for="(layerImageData,frame) in frameImageData" :key="frame">
 			<div class="inline-block self-start">
@@ -33,7 +10,7 @@
 					<i class="text-md material-icons not-italic text-white">add</i>
 				</div>
 			</div>
-			<div class="inline-block self-start h-screen-10">
+			<div class="inline-block self-start h-screen-10 min-h-32">
 				<div class="flex justify-center bg-gray-500 w-64 h-24 shadow-md">
 					<div
 						class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg mr-4"
@@ -50,7 +27,7 @@
 					</div>
 				</div>
 				<div class="w-64 h-auto max-h-full overflow-x-hidden overflow-y-auto rounded-b-lg">
-					<div v-for="(ImageData,layer) in layerImageData" :key="layer">
+					<div v-for="(imageData,layer) in layerImageData" :key="layer">
 						<div
 							class="flex justify-center cursor-pointer outline-none outline-none w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
 						>
@@ -63,7 +40,7 @@
 								<i class="self-center text-md material-icons not-italic text-white">add</i>
 							</div>
 							<div class="self-center flex items-center bg-gray-500 w-24 h-24 shadow-md">
-								<!-- <img src="./photo_2019-07-16_22-43-42.jpg" /> -->
+								<img :src="toURL(imageData)" />
 							</div>
 							<div
 								class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg ml-4"
@@ -222,5 +199,9 @@ interface MessageEventDataOfFL {
 
 .h-screen-10 {
 	height: calc(100vh - 10rem);
+}
+
+.min-h-32 {
+	min-height: 8rem;
 }
 </style>
