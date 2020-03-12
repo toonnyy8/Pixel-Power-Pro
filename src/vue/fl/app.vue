@@ -1,6 +1,6 @@
 <template>
 <body class="bg-gray-200">
-	<div class="outline-none whitespace-no-wrap flex p-8">
+	<div class="outline-none whitespace-no-wrap flex p-12">
 		<div class="flex" v-for="(layerImageData,frame) in frameImageData" :key="frame">
 			<div class="inline-block self-start">
 				<div
@@ -18,7 +18,7 @@
 						<i class="self-center text-md material-icons not-italic text-white">add</i>
 					</div>
 					<div class="self-center flex items-center bg-gray-500 w-24 h-24 shadow-md">
-						<!-- <img src="./photo_2019-07-16_22-43-42.jpg" /> -->
+						<img :src="toURL(framesImageData[frame])" />
 					</div>
 					<div
 						class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg ml-4"
@@ -57,9 +57,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="inline-block self-start mr-8">
+		<div class="inline-block self-start">
 			<div
-				class="flex justify-center items-center cursor-pointer outline-none outline-none w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg mr-8 rounded-r-lg"
+				class="flex justify-center items-center cursor-pointer outline-none outline-none w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg mr-12 rounded-r-lg"
 			>
 				<i class="text-md material-icons not-italic text-white">add</i>
 			</div>
@@ -86,6 +86,17 @@ export default class Frame extends Vue {
 		[new ImageData(100, 10)],
 		[new ImageData(100, 10)],
 		[new ImageData(100, 10), new ImageData(100, 10), new ImageData(100, 10)]
+	];
+	private framesImageData: Array<Array<ImageData>> = [
+		[
+			new ImageData(100, 10),
+			new ImageData(100, 10),
+			new ImageData(100, 10),
+			new ImageData(100, 10),
+			new ImageData(100, 10),
+			new ImageData(100, 10),
+			new ImageData(100, 10)
+		]
 	];
 	private canvas: HTMLCanvasElement = document.createElement("canvas");
 	private width: number;
@@ -198,7 +209,7 @@ interface MessageEventDataOfFL {
 }
 
 .h-screen-10 {
-	height: calc(100vh - 10rem);
+	height: calc(100vh - 12rem);
 }
 
 .min-h-32 {
