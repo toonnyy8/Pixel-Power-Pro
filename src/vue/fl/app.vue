@@ -1,6 +1,6 @@
 <template>
-<body class="bg-gray-200 ml-4">
-	<div v-for="(layerImageData,frame) in frameImageData" :key="frame">
+<body class="bg-gray-200">
+	<!-- <div v-for="(layerImageData,frame) in frameImageData" :key="frame">
 		<button class="rounded h-6 w-6 my-2" v-bind:class="`bg-teal-${Math.abs(frame%4-2)*2+4}00`"></button>
 		<div
 			class="shadow-lg bg-white rounded h-auto w-11/12 whitespace-no-wrap overflow-x-visible overflow-y-hidden ddd"
@@ -21,7 +21,73 @@
 	<button
 		class="rounded h-6 w-6 my-2"
 		v-bind:class="`bg-teal-${Math.abs(frameImageData.length%4-2)*2+4}00`"
-	></button>
+	></button>-->
+
+	<div class="outline-none whitespace-no-wrap flex p-8">
+		<div class="flex" v-for="(layerImageData,frame) in frameImageData" :key="frame">
+			<div class="inline-block self-start">
+				<div
+					class="flex justify-center items-center cursor-pointer outline-none outline-none w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
+					v-bind:class="{'rounded-l-lg':frame==0}"
+				>
+					<i class="text-md material-icons not-italic text-white">add</i>
+				</div>
+			</div>
+			<div class="inline-block self-start h-screen-10">
+				<div class="flex justify-center bg-gray-500 w-64 h-24 shadow-md">
+					<div
+						class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg mr-4"
+					>
+						<i class="self-center text-md material-icons not-italic text-white">add</i>
+					</div>
+					<div class="self-center flex items-center bg-gray-500 w-24 h-24 shadow-md">
+						<!-- <img src="./photo_2019-07-16_22-43-42.jpg" /> -->
+					</div>
+					<div
+						class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg ml-4"
+					>
+						<i class="self-center text-md material-icons not-italic text-white">add</i>
+					</div>
+				</div>
+				<div class="w-64 h-auto max-h-full overflow-x-hidden overflow-y-auto rounded-b-lg">
+					<div v-for="(ImageData,layer) in layerImageData" :key="layer">
+						<div
+							class="flex justify-center cursor-pointer outline-none outline-none w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
+						>
+							<i class="text-md material-icons not-italic text-white">add</i>
+						</div>
+						<div class="flex justify-center bg-gray-500 w-64 h-24 shadow-md">
+							<div
+								class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg mr-4"
+							>
+								<i class="self-center text-md material-icons not-italic text-white">add</i>
+							</div>
+							<div class="self-center flex items-center bg-gray-500 w-24 h-24 shadow-md">
+								<!-- <img src="./photo_2019-07-16_22-43-42.jpg" /> -->
+							</div>
+							<div
+								class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg ml-4"
+							>
+								<i class="self-center text-md material-icons not-italic text-white">add</i>
+							</div>
+						</div>
+					</div>
+					<div
+						class="flex justify-center cursor-pointer outline-none outline-none w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
+					>
+						<i class="text-md material-icons not-italic text-white">add</i>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="inline-block self-start mr-8">
+			<div
+				class="flex justify-center items-center cursor-pointer outline-none outline-none w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg mr-8 rounded-r-lg"
+			>
+				<i class="text-md material-icons not-italic text-white">add</i>
+			</div>
+		</div>
+	</div>
 </body>
 </template>
 
@@ -38,11 +104,11 @@ export default class Frame extends Vue {
 			new ImageData(100, 10)
 		],
 		[new ImageData(100, 10)],
+		[new ImageData(100, 10), new ImageData(100, 10)],
 		[new ImageData(100, 10)],
 		[new ImageData(100, 10)],
 		[new ImageData(100, 10)],
-		[new ImageData(100, 10)],
-		[new ImageData(100, 10)]
+		[new ImageData(100, 10), new ImageData(100, 10), new ImageData(100, 10)]
 	];
 	private canvas: HTMLCanvasElement = document.createElement("canvas");
 	private width: number;
@@ -128,6 +194,7 @@ interface MessageEventDataOfFL {
 
 <style>
 @import url(../../css/index.css);
+@import url(../../css/icon.css);
 </style>
 <style scoped>
 ::-webkit-scrollbar {
@@ -136,7 +203,7 @@ interface MessageEventDataOfFL {
 }
 
 ::-webkit-scrollbar-track {
-	background-color: rgba(0, 0, 0, 0);
+	background-color: rgba(0, 78, 131, 0.288);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -149,20 +216,11 @@ interface MessageEventDataOfFL {
 	height: 5px;
 }
 
-.ddd::-webkit-scrollbar-track {
-	background-color: rgba(0, 78, 131, 0.288);
+.outline-none.outline-none {
+	outline: 0;
 }
 
-.ddd::-webkit-scrollbar-thumb {
-	border-radius: 10px;
-	background-color: rgb(0, 165, 187);
-}
-
-.w-px-72 {
-	width: 72px;
-}
-
-.h-px-72 {
-	height: 72px;
+.h-screen-10 {
+	height: calc(100vh - 10rem);
 }
 </style>
