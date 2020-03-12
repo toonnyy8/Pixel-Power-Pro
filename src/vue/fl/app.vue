@@ -87,16 +87,14 @@ export default class Frame extends Vue {
 		[new ImageData(100, 10)],
 		[new ImageData(100, 10), new ImageData(100, 10), new ImageData(100, 10)]
 	];
-	private framesImageData: Array<Array<ImageData>> = [
-		[
-			new ImageData(100, 10),
-			new ImageData(100, 10),
-			new ImageData(100, 10),
-			new ImageData(100, 10),
-			new ImageData(100, 10),
-			new ImageData(100, 10),
-			new ImageData(100, 10)
-		]
+	private framesImageData: Array<ImageData> = [
+		new ImageData(100, 10),
+		new ImageData(100, 10),
+		new ImageData(100, 10),
+		new ImageData(100, 10),
+		new ImageData(100, 10),
+		new ImageData(100, 10),
+		new ImageData(100, 10)
 	];
 	private canvas: HTMLCanvasElement = document.createElement("canvas");
 	private width: number;
