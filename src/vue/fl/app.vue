@@ -5,18 +5,18 @@
 		<div class="flex" v-for="(layerImageData,frame) in frameImageData" :key="frame">
 			<div class="inline-block self-start">
 				<div
-					class="flex justify-center items-center cursor-pointer outline-none outline-none w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
+					class="flex justify-center items-center cursor-pointer outline-none outline-none w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl"
 					v-bind:class="{'rounded-l-lg':frame==0}"
 				>
 					<i class="text-md material-icons not-italic text-white">add</i>
 				</div>
 			</div>
 			<div class="inline-block self-start h-screen-10 min-h-32">
-				<div class="flex justify-center bg-gray-500 w-64 h-24 shadow-md">
+				<div class="flex justify-center bg-gray-500 w-64 h-24 shadow-lg">
 					<div
-						class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg mr-4"
+						class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl mr-4"
 					>
-						<i class="self-center text-md material-icons not-italic text-white">add</i>
+						<i class="self-center text-md material-icons not-italic text-white">reply</i>
 					</div>
 					<div class="self-center flex items-center bg-gray-500 w-24 h-24 shadow-md">
 						<img :src="toURL(framesImageData[frame])" />
@@ -24,10 +24,10 @@
 					<div
 						class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg ml-4"
 					>
-						<i class="self-center text-md material-icons not-italic text-white">add</i>
+						<i class="self-center text-md material-icons not-italic text-white">filter_none</i>
 					</div>
 				</div>
-				<div class="w-64 h-auto max-h-full overflow-x-hidden overflow-y-auto rounded-b-lg">
+				<div class="w-64 h-auto max-h-full overflow-x-hidden overflow-y-auto rounded-b-lg shadow-lg">
 					<div v-for="(imageData,layer) in layerImageData" :key="layer">
 						<div
 							class="flex justify-center cursor-pointer outline-none outline-none w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
@@ -38,7 +38,7 @@
 							<div
 								class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg mr-4"
 							>
-								<i class="self-center text-md material-icons not-italic text-white">add</i>
+								<i class="self-center text-md material-icons not-italic text-white">reply</i>
 							</div>
 							<div class="self-center flex items-center bg-gray-500 w-24 h-24 shadow-md">
 								<img :src="toURL(imageData)" />
@@ -46,7 +46,7 @@
 							<div
 								class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg ml-4"
 							>
-								<i class="self-center text-md material-icons not-italic text-white">add</i>
+								<i class="self-center text-md material-icons not-italic text-white">filter_none</i>
 							</div>
 						</div>
 					</div>
@@ -60,7 +60,7 @@
 		</div>
 		<div class="inline-block self-start">
 			<div
-				class="flex justify-center items-center cursor-pointer outline-none outline-none w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg mr-12 rounded-r-lg"
+				class="flex justify-center items-center cursor-pointer outline-none outline-none w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl mr-12 rounded-r-lg"
 			>
 				<i class="text-md material-icons not-italic text-white">add</i>
 			</div>
