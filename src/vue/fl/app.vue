@@ -1,5 +1,6 @@
 <template>
-<body class="bg-gray-200">
+<body class>
+	<div ref="horizontalScroll" class="fixed w-screen h-12"></div>
 	<div class="outline-none whitespace-no-wrap flex p-12">
 		<div class="flex" v-for="(layerImageData,frame) in frameImageData" :key="frame">
 			<div class="inline-block self-start">
@@ -131,6 +132,43 @@ export default class Frame extends Vue {
 			// 	]
 			// });
 		};
+
+		let deltaY = 0;
+		if (window.navigator.userAgent.indexOf("Chrome") > -1) {
+			(<HTMLElement>this.$refs["horizontalScroll"]).addEventListener(
+				"wheel",
+				e => {
+					e.preventDefault();
+					deltaY = (<WheelEvent>e).deltaY;
+					if (deltaY != 0) {
+						requestAnimationFrame(() => {
+							deltaY = (50 * deltaY) / Math.abs(deltaY);
+							if (!Number.isNaN(deltaY)) {
+								document.documentElement.scrollLeft += deltaY;
+							}
+							deltaY = 0;
+						});
+					}
+				}
+			);
+		} else if (window.navigator.userAgent.indexOf("Firefox") > -1) {
+			(<HTMLElement>this.$refs["horizontalScroll"]).addEventListener(
+				"wheel",
+				e => {
+					e.preventDefault();
+					deltaY = (<WheelEvent>e).deltaY;
+					if (deltaY != 0) {
+						requestAnimationFrame(() => {
+							deltaY = (50 * deltaY) / Math.abs(deltaY);
+							if (!Number.isNaN(deltaY)) {
+								document.documentElement.scrollLeft += deltaY;
+							}
+							deltaY = 0;
+						});
+					}
+				}
+			);
+		}
 	}
 	toURL(imageData: ImageData) {
 		let ctx = this.canvas.getContext("2d");
@@ -208,6 +246,10 @@ interface MessageEventDataOfFL {
 
 .h-screen-10 {
 	height: calc(100vh - 12rem);
+}
+
+.h-screen-s-12 {
+	height: calc(100vh - 6rem);
 }
 
 .min-h-32 {
