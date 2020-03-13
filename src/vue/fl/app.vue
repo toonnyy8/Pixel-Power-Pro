@@ -1,6 +1,10 @@
 <template>
 <body class>
-	<div ref="horizontalScroll" class="fixed w-screen h-12"></div>
+	<div
+		ref="horizontalScroll"
+		class="fixed w-screen h-12"
+		v-bind:style="`transform:translate(0, ${scrollTop}px);`"
+	></div>
 	<div class="outline-none whitespace-no-wrap flex p-12">
 		<div class="flex" v-for="(layerImageData,frame) in frameImageData" :key="frame">
 			<div class="inline-block self-start">
@@ -103,7 +107,7 @@ export default class Frame extends Vue {
 	private channel: BroadcastChannel = new BroadcastChannel(
 		`${window.name}-frame&layer`
 	);
-
+	private scrollTop = 0;
 	mounted() {
 		this.frameImageData;
 		this.channel.onmessage = e => {
@@ -169,6 +173,12 @@ export default class Frame extends Vue {
 				}
 			);
 		}
+
+		let scrollAnim = () => {
+			requestAnimationFrame(scrollAnim);
+			this.scrollTop = document.documentElement.scrollTop;
+		};
+		scrollAnim();
 	}
 	toURL(imageData: ImageData) {
 		let ctx = this.canvas.getContext("2d");
