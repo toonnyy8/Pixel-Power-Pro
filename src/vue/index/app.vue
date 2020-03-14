@@ -5,14 +5,52 @@
 </template>
 
 <script lang="ts">
+import * as Immutable from "immutable";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class Frame extends Vue {
+	private frameImageData: Immutable.List<
+		Immutable.List<ImageData>
+	> = Immutable.List.of(
+		Immutable.List.of(new ImageData(10, 10), new ImageData(10, 10)),
+		Immutable.List.of(new ImageData(10, 10)),
+		Immutable.List.of(new ImageData(10, 10)),
+		Immutable.List.of(new ImageData(10, 10)),
+		Immutable.List.of(new ImageData(10, 10)),
+		Immutable.List.of(new ImageData(10, 10)),
+		Immutable.List.of(new ImageData(10, 10))
+	);
+	private framesImageData: Immutable.List<ImageData>;
+	private width = 10;
+	private height = 10;
 	private flChannel: BroadcastChannel;
-	private drawerChannels: { [key: string]: BroadcastChannel };
+	private drawerChannels: {
+		[key: string]: { channel: BroadcastChannel; checked: boolean };
+	};
+	private canvas: HTMLCanvasElement = document.createElement("canvas");
 	mounted() {
 		window.name = "aaa";
+		this.resize(this.width, this.height, 0, 0);
+	}
+	toURL(imageData: ImageData) {
+		let ctx = this.canvas.getContext("2d");
+		ctx.clearRect(0, 0, imageData.width, imageData.height);
+		ctx.putImageData(imageData, 0, 0);
+		console.log(this.canvas);
+		return this.canvas.toDataURL("image/png");
+	}
+	resize(width: number, height: number, dx: number, dy: number) {
+		this.canvas.width = width;
+		this.canvas.height = height;
+		let ctx = this.canvas.getContext("2d");
+		this.frameImageData = this.frameImageData.map(layerImageData => {
+			return layerImageData.map(imageData => {
+				ctx.clearRect(0, 0, width, height);
+				ctx.putImageData(imageData, dx, dy);
+				return ctx.getImageData(0, 0, width, height);
+			});
+		});
 	}
 	openFL() {
 		if (this.flChannel != null) {
@@ -23,9 +61,24 @@ export default class Frame extends Vue {
 			this.flChannel.onmessage = e => {
 				let data = <MessageEventDataOfFL>e.data;
 				switch (data.case) {
+					case "opened": {
+						this.frameImageData.forEach((layerImageData, frame) => {
+							layerImageData.forEach((imageData, layer) => {
+								this.flChannel.postMessage({
+									case: "image",
+									image: {
+										frame: frame,
+										layer: layer,
+										url: this.toURL(imageData)
+									}
+								});
+								console.log("image");
+							});
+						});
+						break;
+					}
 					case "close": {
 						this.flChannel.close();
-						this.flChannel = null;
 						console.log("close");
 						break;
 					}
@@ -36,7 +89,7 @@ export default class Frame extends Vue {
 }
 
 interface MessageEventDataOfFL {
-	case: "close";
+	case: "opened" | "close";
 }
 </script>
 

@@ -16,10 +16,13 @@
 		class="fixed flex rounded-r-lg w-64 h-64"
 		v-bind:style="`transform:translate(0, ${-scrollTop}px);`"
 	>
-		<img class="self-start rounded-r-lg shadow-lg" src="./ms_twbb_pc_2560x1600.png" />
+		<img
+			class="self-start pixel max-w-full h-auto rounded-r-lg shadow-lg"
+			src="./ms_twbb_pc_2560x1600.png"
+		/>
 	</div>
 	<div class="outline-none whitespace-no-wrap flex ml-64">
-		<div class="flex" v-for="(layerImageData,frame) in frameImageData" :key="frame">
+		<div class="flex" v-for="(layerImageDataURL,frame) in frameImageDataURL" :key="frame">
 			<div class="inline-block self-start">
 				<div
 					class="flex justify-center items-center cursor-pointer outline-none outline-none w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl"
@@ -45,7 +48,7 @@
 					</div>
 				</div>
 				<div class="w-64 h-auto max-h-full overflow-x-hidden overflow-y-auto rounded-b-lg shadow-lg">
-					<div v-for="(imageData,layer) in layerImageData" :key="layer">
+					<div v-for="(imageDataURL,layer) in layerImageDataURL" :key="layer">
 						<div
 							class="flex justify-center cursor-pointer outline-none outline-none w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
 						>
@@ -57,8 +60,8 @@
 							>
 								<i class="self-center text-md material-icons not-italic text-white">reply</i>
 							</div>
-							<div class="self-center flex items-center bg-gray-500 w-24 h-24 shadow-md">
-								<img :src="toURL(imageData)" />
+							<div class="self-center flex items-center justify-center bg-gray-500 w-24 h-24 shadow-md">
+								<img class="pixel max-w-full h-auto" :src="imageDataURL" />
 							</div>
 							<div
 								class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg ml-4"
@@ -106,6 +109,7 @@ export default class Frame extends Vue {
 		[new ImageData(100, 10)],
 		[new ImageData(100, 10), new ImageData(100, 10), new ImageData(100, 10)]
 	];
+	private frameImageDataURL: Array<Array<string>> = [];
 	private framesImageData: Array<ImageData> = [
 		new ImageData(100, 10),
 		new ImageData(100, 10),
@@ -122,13 +126,19 @@ export default class Frame extends Vue {
 	private channel: BroadcastChannel = new BroadcastChannel(window.name);
 	private scrollTop = 0;
 	mounted() {
-		this.frameImageData;
-		console.log(this.channel);
 		this.channel.onmessage = e => {
 			let data = <MessageEventDataOfFL>e.data;
 			switch (data.case) {
-				case "images": {
-					this.setImageData(data.images);
+				case "image": {
+					if (!this.frameImageDataURL[data.image.frame]) {
+						this.$set(this.frameImageDataURL, data.image.frame, []);
+					}
+					this.$set(
+						this.frameImageDataURL[data.image.frame],
+						data.image.layer,
+						data.image.url
+					);
+					console.log(this.frameImageDataURL);
 					break;
 				}
 				case "size": {
@@ -150,8 +160,12 @@ export default class Frame extends Vue {
 			// 	]
 			// });
 		};
+		this.channel.postMessage({ case: "opened" });
+
 		window.onunload = () => {
 			this.channel.postMessage({ case: "close" });
+			window.close();
+			console.log("closed");
 		};
 
 		let deltaY = 0;
@@ -232,8 +246,12 @@ export default class Frame extends Vue {
 }
 
 interface MessageEventDataOfFL {
-	case: "images" | "size";
-	images: Array<Array<ImageData>>;
+	case: "image" | "size";
+	image: {
+		frame: number;
+		layer: number;
+		url: string;
+	};
 	size: {
 		width: number;
 		height: number;
@@ -277,5 +295,11 @@ interface MessageEventDataOfFL {
 
 .min-h-32 {
 	min-height: 8rem;
+}
+
+.pixel {
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+	image-rendering: -moz-crisp-edges;
 }
 </style>
