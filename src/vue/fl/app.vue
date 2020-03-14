@@ -17,7 +17,7 @@
 		v-bind:style="`transform:translate(0, ${-scrollTop}px);`"
 	>
 		<img
-			class="self-start pixel max-w-full h-auto rounded-r-lg shadow-lg"
+			class="self-start pixel min-w-full h-auto rounded-r-lg shadow-lg"
 			src="./ms_twbb_pc_2560x1600.png"
 		/>
 	</div>
@@ -38,8 +38,17 @@
 					>
 						<i class="self-center text-md material-icons not-italic text-white">reply</i>
 					</div>
-					<div class="self-center flex items-center bg-gray-500 w-24 h-24 shadow-md">
-						<img :src="toURL(framesImageData[frame])" />
+					<div class="self-center flex items-center justify-center bg-gray-500 w-24 h-24 shadow-md">
+						<img
+							class="pixel"
+							v-bind:class="{
+								'min-w-full':width>=height,
+								'min-h-full':width<=height,
+								'w-auto':width>height,
+								'h-auto':width<height
+							}"
+							:src="framesImageDataURL[frame]"
+						/>
 					</div>
 					<div
 						class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg ml-4"
@@ -61,7 +70,16 @@
 								<i class="self-center text-md material-icons not-italic text-white">reply</i>
 							</div>
 							<div class="self-center flex items-center justify-center bg-gray-500 w-24 h-24 shadow-md">
-								<img class="pixel max-w-full h-auto" :src="imageDataURL" />
+								<img
+									class="pixel"
+									v-bind:class="{
+										'min-w-full':width>=height,
+										'min-h-full':width<=height,
+										'w-auto':width>height,
+										'h-auto':width<height
+									}"
+									:src="imageDataURL"
+								/>
 							</div>
 							<div
 								class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg ml-4"
@@ -119,6 +137,7 @@ export default class Frame extends Vue {
 		new ImageData(100, 10),
 		new ImageData(100, 10)
 	];
+	private framesImageDataURL: Array<string> = [];
 	private canvas: HTMLCanvasElement = document.createElement("canvas");
 	private width: number;
 	private height: number;
@@ -130,24 +149,36 @@ export default class Frame extends Vue {
 			let data = <MessageEventDataOfFL>e.data;
 			switch (data.case) {
 				case "image": {
-					if (!this.frameImageDataURL[data.image.frame]) {
-						this.$set(this.frameImageDataURL, data.image.frame, []);
+					if (data.image.layer != -1) {
+						if (!this.frameImageDataURL[data.image.frame]) {
+							this.$set(
+								this.frameImageDataURL,
+								data.image.frame,
+								[]
+							);
+						}
+						this.$set(
+							this.frameImageDataURL[data.image.frame],
+							data.image.layer,
+							data.image.url
+						);
+						console.log(this.frameImageDataURL);
+					} else {
+						this.$set(
+							this.framesImageDataURL,
+							data.image.frame,
+							data.image.url
+						);
 					}
-					this.$set(
-						this.frameImageDataURL[data.image.frame],
-						data.image.layer,
-						data.image.url
-					);
-					console.log(this.frameImageDataURL);
 					break;
 				}
 				case "size": {
-					this.resize(
-						data.size.width,
-						data.size.height,
-						data.size.dx,
-						data.size.dy
-					);
+					this.width = data.size.width;
+					this.height = data.size.height;
+					break;
+				}
+				case "close": {
+					window.close();
 					break;
 				}
 			}
@@ -246,7 +277,7 @@ export default class Frame extends Vue {
 }
 
 interface MessageEventDataOfFL {
-	case: "image" | "size";
+	case: "image" | "size" | "close";
 	image: {
 		frame: number;
 		layer: number;
@@ -255,8 +286,6 @@ interface MessageEventDataOfFL {
 	size: {
 		width: number;
 		height: number;
-		dx: number;
-		dy: number;
 	};
 }
 </script>
@@ -302,4 +331,9 @@ interface MessageEventDataOfFL {
 	image-rendering: crisp-edges;
 	image-rendering: -moz-crisp-edges;
 }
+
+/* img {
+	min-width: 100%;
+	height: auto;
+} */
 </style>

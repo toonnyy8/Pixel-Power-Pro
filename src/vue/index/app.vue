@@ -6,32 +6,85 @@
 
 <script lang="ts">
 import * as Immutable from "immutable";
+import * as tfc from "@tensorflow/tfjs-core";
 import { Component, Prop, Vue } from "vue-property-decorator";
+
+let overlap = (
+	layerImageDate: Immutable.List<ImageData>,
+	width: number,
+	height: number
+) => {
+	let overlapPixels = tfc.tidy(() => {
+		return layerImageDate.reduceRight((reduction, value) => {
+			return tfc.tidy(() => {
+				let pixels = tfc.browser.fromPixels(<ImageData>value, 4);
+				let alpha = tfc.div<tfc.Tensor3D>(
+					pixels.slice([0, 0, 3], [height, width, 1]),
+					255
+				);
+
+				let reductionAlpha = tfc.div<tfc.Tensor3D>(
+					reduction.slice([0, 0, 3], [height, width, 1]),
+					255
+				);
+
+				return tfc.add<tfc.Tensor3D>(
+					tfc.mul<tfc.Tensor3D>(pixels, alpha),
+					tfc.mul<tfc.Tensor3D>(
+						tfc.mul<tfc.Tensor3D>(reduction, reductionAlpha),
+						tfc.sub<tfc.Tensor3D>(1, alpha)
+					)
+				);
+			});
+		}, tfc.zeros([height, width, 4]));
+	});
+
+	return overlapPixels.data().then(data => {
+		overlapPixels.dispose();
+		return data;
+	});
+};
 
 @Component
 export default class Frame extends Vue {
 	private frameImageData: Immutable.List<
 		Immutable.List<ImageData>
 	> = Immutable.List.of(
-		Immutable.List.of(new ImageData(10, 10), new ImageData(10, 10)),
-		Immutable.List.of(new ImageData(10, 10)),
-		Immutable.List.of(new ImageData(10, 10)),
-		Immutable.List.of(new ImageData(10, 10)),
-		Immutable.List.of(new ImageData(10, 10)),
-		Immutable.List.of(new ImageData(10, 10)),
-		Immutable.List.of(new ImageData(10, 10))
+		// Immutable.List.of(new ImageData(10, 10), new ImageData(10, 10)),
+		// Immutable.List.of(new ImageData(10, 10)),
+		// Immutable.List.of(new ImageData(10, 10)),
+		// Immutable.List.of(new ImageData(10, 10)),
+		// Immutable.List.of(new ImageData(10, 10)),
+		// Immutable.List.of(new ImageData(10, 10)),
+		Immutable.List.of(new ImageData(20, 10))
 	);
-	private framesImageData: Immutable.List<ImageData>;
-	private width = 10;
+	private framesImageData: Immutable.List<ImageData> = Immutable.List.of();
+	private width = 20;
 	private height = 10;
 	private flChannel: BroadcastChannel;
 	private drawerChannels: {
-		[key: string]: { channel: BroadcastChannel; checked: boolean };
+		[key: string]: BroadcastChannel;
 	};
 	private canvas: HTMLCanvasElement = document.createElement("canvas");
 	mounted() {
 		window.name = "aaa";
 		this.resize(this.width, this.height, 0, 0);
+		window.onunload = () => {
+			if (this.flChannel) {
+				this.flChannel.postMessage({ case: "close" });
+			}
+		};
+
+		this.frameImageData.forEach((layerImageData, frame) => {
+			overlap(layerImageData, this.width, this.height).then(data => {
+				let imageData = new ImageData(this.width, this.height);
+				imageData.data.set(new Uint8ClampedArray(data));
+				this.framesImageData = this.framesImageData.setIn(
+					[frame],
+					imageData
+				);
+			});
+		});
 	}
 	toURL(imageData: ImageData) {
 		let ctx = this.canvas.getContext("2d");
@@ -62,6 +115,13 @@ export default class Frame extends Vue {
 				let data = <MessageEventDataOfFL>e.data;
 				switch (data.case) {
 					case "opened": {
+						this.flChannel.postMessage({
+							case: "size",
+							size: {
+								width: this.width,
+								height: this.height
+							}
+						});
 						this.frameImageData.forEach((layerImageData, frame) => {
 							layerImageData.forEach((imageData, layer) => {
 								this.flChannel.postMessage({
@@ -75,10 +135,22 @@ export default class Frame extends Vue {
 								console.log("image");
 							});
 						});
+						this.framesImageData.forEach((imageData, frame) => {
+							this.flChannel.postMessage({
+								case: "image",
+								image: {
+									frame: frame,
+									layer: -1,
+									url: this.toURL(imageData)
+								}
+							});
+						});
+
 						break;
 					}
 					case "close": {
 						this.flChannel.close();
+						this.flChannel = null;
 						console.log("close");
 						break;
 					}
