@@ -5,8 +5,8 @@
   "main": "./build/index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "parcel ./src/html/fl.html -p 8080 --open",
-    "build": "parcel build --no-content-hash ./src/html/fl.html --out-dir build --public-url=./",
+    "dev": "parcel ./src/html/index.html ./src/html/fl.html -p 8080 --open",
+    "build": "parcel build --no-content-hash ./src/html/index.html ./src/html/fl.html --out-dir build --public-url=./",
     "dev:template": "parcel ./template/index.html -p 8080 --open"
   },
   "repository": {

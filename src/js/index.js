@@ -5,10 +5,11 @@ import erudaDom from "eruda-dom"
 eruda.init();
 eruda.add(erudaDom)
 
-import "../ts/test"
-// import * as idb from "idb"
-// import Vue from 'vue'
-// import App from '../vue/app.vue'
+import * as idb from "idb"
+import Vue from 'vue'
+import App from '../vue/index/app.vue'
+new Vue(App).$mount("#app")
+
 //
 // document.oncontextmenu = () => {
 //     window.event.returnValue = false; //將滑鼠右鍵事件取消

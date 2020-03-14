@@ -119,12 +119,11 @@ export default class Frame extends Vue {
 	private width: number;
 	private height: number;
 	private nowFrame: number;
-	private channel: BroadcastChannel = new BroadcastChannel(
-		`${window.name}-frame&layer`
-	);
+	private channel: BroadcastChannel = new BroadcastChannel(window.name);
 	private scrollTop = 0;
 	mounted() {
 		this.frameImageData;
+		console.log(this.channel);
 		this.channel.onmessage = e => {
 			let data = <MessageEventDataOfFL>e.data;
 			switch (data.case) {
@@ -150,6 +149,9 @@ export default class Frame extends Vue {
 			// 		[new ImageData(100, 10)]
 			// 	]
 			// });
+		};
+		window.onunload = () => {
+			this.channel.postMessage({ case: "close" });
 		};
 
 		let deltaY = 0;
