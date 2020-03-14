@@ -2,20 +2,33 @@
 <body class>
 	<div
 		ref="horizontalScroll"
-		class="fixed w-screen h-12"
-		v-bind:style="`transform:translate(0, ${scrollTop}px);`"
-	></div>
-	<div class="outline-none whitespace-no-wrap flex p-12">
+		class="fixed flex w-screen h-24"
+		v-bind:style="`transform:translate(0, ${-scrollTop}px);`"
+	>
+		<div
+			class="self-center flex justify-center cursor-pointer rounded-full w-16 h-16 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg ml-4"
+		>
+			<i class="self-center text-4xl material-icons not-italic text-white">delete_forever</i>
+		</div>
+	</div>
+	<div class="h-24"></div>
+	<div
+		class="fixed flex rounded-r-lg w-64 h-64"
+		v-bind:style="`transform:translate(0, ${-scrollTop}px);`"
+	>
+		<img class="self-start rounded-r-lg shadow-lg" src="./ms_twbb_pc_2560x1600.png" />
+	</div>
+	<div class="outline-none whitespace-no-wrap flex ml-64">
 		<div class="flex" v-for="(layerImageData,frame) in frameImageData" :key="frame">
 			<div class="inline-block self-start">
 				<div
 					class="flex justify-center items-center cursor-pointer outline-none outline-none w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl"
-					v-bind:class="{'rounded-l-lg':frame==0}"
+					v-bind:class="{'rounded-l-lg':frame==0,'ml-12':frame==0}"
 				>
 					<i class="text-md material-icons not-italic text-white">add</i>
 				</div>
 			</div>
-			<div class="inline-block self-start h-screen-10 min-h-32">
+			<div class="inline-block self-start h-screen-s-56 min-h-32">
 				<div class="flex justify-center bg-gray-500 w-64 h-24 shadow-lg">
 					<div
 						class="self-center flex justify-center cursor-pointer outline-none outline-none rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl mr-4"
@@ -60,6 +73,7 @@
 						<i class="text-md material-icons not-italic text-white">add</i>
 					</div>
 				</div>
+				<div class="h-4"></div>
 			</div>
 		</div>
 		<div class="inline-block self-start">
@@ -104,6 +118,7 @@ export default class Frame extends Vue {
 	private canvas: HTMLCanvasElement = document.createElement("canvas");
 	private width: number;
 	private height: number;
+	private nowFrame: number;
 	private channel: BroadcastChannel = new BroadcastChannel(
 		`${window.name}-frame&layer`
 	);
@@ -175,8 +190,8 @@ export default class Frame extends Vue {
 		}
 
 		let scrollAnim = () => {
-			requestAnimationFrame(scrollAnim);
 			this.scrollTop = document.documentElement.scrollTop;
+			requestAnimationFrame(scrollAnim);
 		};
 		scrollAnim();
 	}
@@ -254,12 +269,8 @@ interface MessageEventDataOfFL {
 	outline: 0;
 }
 
-.h-screen-10 {
-	height: calc(100vh - 12rem);
-}
-
-.h-screen-s-12 {
-	height: calc(100vh - 6rem);
+.h-screen-s-56 {
+	height: calc(100vh - 14rem);
 }
 
 .min-h-32 {
