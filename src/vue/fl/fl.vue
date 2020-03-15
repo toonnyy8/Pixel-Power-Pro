@@ -69,6 +69,7 @@ export default class FL extends Vue {
 	private channel: BroadcastChannel = new BroadcastChannel(window.name);
 	private scrollTop = 0;
 	mounted() {
+		// 接收到控制頁訊息時的反應
 		this.channel.onmessage = e => {
 			let data = <MessageEventDataOfFL>e.data;
 			switch (data.case) {
@@ -103,14 +104,17 @@ export default class FL extends Vue {
 				}
 			}
 		};
+		// 告訴控制頁，圖層頁已準備好
 		this.channel.postMessage({ case: "opened" });
 
+		// 當圖層頁 unload 時，就向控制頁傳送 close 訊息，並關閉圖層頁
 		window.onunload = () => {
 			this.channel.postMessage({ case: "close" });
 			window.close();
 			console.log("closed");
 		};
 
+		// 當於 horizontalScroll 上發生滾動事件時，讓頁面左右滾動
 		let deltaY = 0;
 		if (window.navigator.userAgent.indexOf("Chrome") > -1) {
 			(<HTMLElement>this.$refs["horizontalScroll"]).addEventListener(
@@ -147,6 +151,8 @@ export default class FL extends Vue {
 				}
 			);
 		}
+
+		// 使 horizontalScroll、按鍵與展示區會隨著上下滾動而偏移
 		let scrollAnim = () => {
 			this.scrollTop = document.documentElement.scrollTop;
 			requestAnimationFrame(scrollAnim);
