@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "parcel ./src/html/index.html ./src/html/fl.html -p 8080 --open",
     "build": "parcel build --no-content-hash ./src/html/index.html ./src/html/fl.html --out-dir build --public-url=./",
-    "dev:template": "parcel ./template/index.html -p 8080 --open"
+    "dev:template": "parcel ./template/index.html -p 8080 --open",
+    "dev:test": "parcel ./src/html/test.html -p 8080 --open"
   },
   "repository": {
     "type": "git",

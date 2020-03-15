@@ -113,30 +113,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class Frame extends Vue {
-	private frameImageData: Array<Array<ImageData>> = [
-		[
-			new ImageData(100, 10),
-			new ImageData(100, 10),
-			new ImageData(100, 10),
-			new ImageData(100, 10)
-		],
-		[new ImageData(100, 10)],
-		[new ImageData(100, 10), new ImageData(100, 10)],
-		[new ImageData(100, 10)],
-		[new ImageData(100, 10)],
-		[new ImageData(100, 10)],
-		[new ImageData(100, 10), new ImageData(100, 10), new ImageData(100, 10)]
-	];
 	private frameImageDataURL: Array<Array<string>> = [];
-	private framesImageData: Array<ImageData> = [
-		new ImageData(100, 10),
-		new ImageData(100, 10),
-		new ImageData(100, 10),
-		new ImageData(100, 10),
-		new ImageData(100, 10),
-		new ImageData(100, 10),
-		new ImageData(100, 10)
-	];
 	private framesImageDataURL: Array<string> = [];
 	private canvas: HTMLCanvasElement = document.createElement("canvas");
 	private width: number;
@@ -182,14 +159,6 @@ export default class Frame extends Vue {
 					break;
 				}
 			}
-
-			// this.channel.postMessage({
-			// 	case: "images",
-			// 	images: [
-			// 		[new ImageData(100, 10), new ImageData(100, 10)],
-			// 		[new ImageData(100, 10)]
-			// 	]
-			// });
 		};
 		this.channel.postMessage({ case: "opened" });
 
@@ -241,38 +210,6 @@ export default class Frame extends Vue {
 			requestAnimationFrame(scrollAnim);
 		};
 		scrollAnim();
-	}
-	toURL(imageData: ImageData) {
-		let ctx = this.canvas.getContext("2d");
-		ctx.clearRect(0, 0, imageData.width, imageData.height);
-		ctx.putImageData(imageData, 0, 0);
-
-		return this.canvas.toDataURL("image/png");
-	}
-	resize(width: number, height: number, dx: number, dy: number) {
-		this.canvas.width = width;
-		this.canvas.width = width;
-		let ctx = this.canvas.getContext("2d");
-		for (let f = 0; f < this.frameImageData.length; f++) {
-			for (let l = 0; l < this.frameImageData[f].length; l++) {
-				ctx.clearRect(0, 0, width, height);
-				ctx.putImageData(this.frameImageData[f][l], dx, dy);
-
-				this.$set(
-					this.frameImageData[f],
-					l,
-					ctx.getImageData(0, 0, width, height)
-				);
-			}
-		}
-	}
-	setImageData(imageDatas: Array<Array<ImageData>>) {
-		for (let f = 0; f < this.frameImageData.length; f++) {
-			for (let l = 0; l < this.frameImageData[f].length; l++) {
-				this.$set(this.frameImageData[f], l, imageDatas[f][l]);
-			}
-		}
-		console.log(this.frameImageData);
 	}
 }
 
