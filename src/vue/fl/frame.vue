@@ -4,14 +4,14 @@
 		<div class="w-64 h-auto max-h-full overflow-x-hidden overflow-y-auto rounded-b-lg shadow-lg">
 			<div v-for="(layerURL,layer) in layersURL" :key="layer">
 				<div
-					class="flex justify-center cursor-pointer outline-none outline-none w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
+					class="flex justify-center cursor-pointer w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
 				>
 					<i class="text-md material-icons not-italic text-white">add</i>
 				</div>
 				<layer v-bind:width="width" v-bind:height="height" v-bind:url="layerURL"></layer>
 			</div>
 			<div
-				class="flex justify-center cursor-pointer outline-none outline-none w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
+				class="flex justify-center cursor-pointer w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
 			>
 				<i class="text-md material-icons not-italic text-white">add</i>
 			</div>
@@ -66,27 +66,4 @@ export default class Frame extends Vue {
 	width: 5px;
 	height: 5px;
 }
-
-.outline-none.outline-none {
-	outline: 0;
-}
-
-.h-screen-s-56 {
-	height: calc(100vh - 14rem);
-}
-
-.min-h-32 {
-	min-height: 8rem;
-}
-
-.pixel {
-	image-rendering: pixelated;
-	image-rendering: crisp-edges;
-	image-rendering: -moz-crisp-edges;
-}
-
-/* img {
-	min-width: 100%;
-	height: auto;
-} */
 </style>

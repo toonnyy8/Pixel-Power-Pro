@@ -21,11 +21,11 @@
 			src="./ms_twbb_pc_2560x1600.png"
 		/>
 	</div>
-	<div class="outline-none whitespace-no-wrap flex ml-64">
+	<div class="whitespace-no-wrap flex ml-64">
 		<div class="flex" v-for="(layersURL,frame) in framesURLs" :key="frame">
 			<div class="inline-block self-start">
 				<div
-					class="flex justify-center items-center cursor-pointer outline-none outline-none w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl"
+					class="flex justify-center items-center cursor-pointer w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl"
 					v-bind:class="{'rounded-l-lg':frame==0,'ml-12':frame==0}"
 				>
 					<i class="text-md material-icons not-italic text-white">add</i>
@@ -41,7 +41,7 @@
 		</div>
 		<div class="inline-block self-start">
 			<div
-				class="flex justify-center items-center cursor-pointer outline-none outline-none w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl mr-12 rounded-r-lg"
+				class="flex justify-center items-center cursor-pointer w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl mr-12 rounded-r-lg"
 			>
 				<i class="text-md material-icons not-italic text-white">add</i>
 			</div>
@@ -153,102 +153,6 @@ export default class FL extends Vue {
 		};
 		scrollAnim();
 	}
-
-	get scroll_width() {
-		return {
-			"min-width": `${16 + this.framesURL.length * (16 + 2) + 3 + 5}rem`
-		};
-	}
-	// mounted() {
-	// 	this.channel.onmessage = e => {
-	// 		let data = <MessageEventDataOfFL>e.data;
-	// 		switch (data.case) {
-	// 			case "image": {
-	// 				if (data.image.layer != -1) {
-	// 					if (!this.frameImageDataURL[data.image.frame]) {
-	// 						this.$set(
-	// 							this.frameImageDataURL,
-	// 							data.image.frame,
-	// 							[]
-	// 						);
-	// 					}
-	// 					this.$set(
-	// 						this.frameImageDataURL[data.image.frame],
-	// 						data.image.layer,
-	// 						data.image.url
-	// 					);
-	// 					console.log(this.frameImageDataURL);
-	// 				} else {
-	// 					this.$set(
-	// 						this.framesImageDataURL,
-	// 						data.image.frame,
-	// 						data.image.url
-	// 					);
-	// 				}
-	// 				break;
-	// 			}
-	// 			case "size": {
-	// 				this.width = data.size.width;
-	// 				this.height = data.size.height;
-	// 				break;
-	// 			}
-	// 			case "close": {
-	// 				window.close();
-	// 				break;
-	// 			}
-	// 		}
-	// 	};
-	// 	this.channel.postMessage({ case: "opened" });
-
-	// 	window.onunload = () => {
-	// 		this.channel.postMessage({ case: "close" });
-	// 		window.close();
-	// 		console.log("closed");
-	// 	};
-
-	// 	let deltaY = 0;
-	// 	if (window.navigator.userAgent.indexOf("Chrome") > -1) {
-	// 		(<HTMLElement>this.$refs["horizontalScroll"]).addEventListener(
-	// 			"wheel",
-	// 			e => {
-	// 				e.preventDefault();
-	// 				deltaY = (<WheelEvent>e).deltaY;
-	// 				if (deltaY != 0) {
-	// 					requestAnimationFrame(() => {
-	// 						deltaY = (50 * deltaY) / Math.abs(deltaY);
-	// 						if (!Number.isNaN(deltaY)) {
-	// 							document.documentElement.scrollLeft += deltaY;
-	// 						}
-	// 						deltaY = 0;
-	// 					});
-	// 				}
-	// 			}
-	// 		);
-	// 	} else if (window.navigator.userAgent.indexOf("Firefox") > -1) {
-	// 		(<HTMLElement>this.$refs["horizontalScroll"]).addEventListener(
-	// 			"wheel",
-	// 			e => {
-	// 				e.preventDefault();
-	// 				deltaY = (<WheelEvent>e).deltaY;
-	// 				if (deltaY != 0) {
-	// 					requestAnimationFrame(() => {
-	// 						deltaY = (50 * deltaY) / Math.abs(deltaY);
-	// 						if (!Number.isNaN(deltaY)) {
-	// 							document.documentElement.scrollLeft += deltaY;
-	// 						}
-	// 						deltaY = 0;
-	// 					});
-	// 				}
-	// 			}
-	// 		);
-	// 	}
-
-	// 	let scrollAnim = () => {
-	// 		this.scrollTop = document.documentElement.scrollTop;
-	// 		requestAnimationFrame(scrollAnim);
-	// 	};
-	// 	scrollAnim();
-	// }
 }
 
 interface MessageEventDataOfFL {
@@ -289,10 +193,6 @@ interface MessageEventDataOfFL {
 	height: 5px;
 }
 
-.outline-none.outline-none {
-	outline: 0;
-}
-
 .h-screen-s-56 {
 	height: calc(100vh - 14rem);
 }
@@ -306,9 +206,4 @@ interface MessageEventDataOfFL {
 	image-rendering: crisp-edges;
 	image-rendering: -moz-crisp-edges;
 }
-
-/* img {
-	min-width: 100%;
-	height: auto;
-} */
 </style>
