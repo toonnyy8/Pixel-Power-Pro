@@ -22,11 +22,12 @@
 		/>
 	</div>
 	<div class="whitespace-no-wrap flex ml-64">
-		<div class="flex" v-for="(layersURL,frame) in framesURLs" :key="frame">
+		<div class="flex" v-for="(_,frame) in framesURL.size" :key="frame">
 			<div class="inline-block self-start">
 				<div
 					class="flex justify-center items-center cursor-pointer w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl"
 					v-bind:class="{'rounded-l-lg':frame==0,'ml-12':frame==0}"
+					@click="addFrame(frame)()"
 				>
 					<i class="text-md material-icons not-italic text-white">add</i>
 				</div>
@@ -35,13 +36,15 @@
 				class="inline-block self-start h-screen-s-56 min-h-32"
 				v-bind:width="width"
 				v-bind:height="height"
-				v-bind:layersURL="layersURL"
-				v-bind:frameURL="framesURL[frame]"
+				v-bind:layersURL="framesURLs.get(frame)"
+				v-bind:frameURL="framesURL.get(frame)"
+				v-bind:addLayer="addLayer(frame)"
 			/>
 		</div>
 		<div class="inline-block self-start">
 			<div
 				class="flex justify-center items-center cursor-pointer w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl mr-12 rounded-r-lg"
+				@click="addFrame(framesURL.toList().size)()"
 			>
 				<i class="text-md material-icons not-italic text-white">add</i>
 			</div>
@@ -51,6 +54,7 @@
 </template>
 
 <script lang="ts">
+import * as Immutable from "immutable";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import Frame from "./frame.vue";
 
@@ -60,34 +64,42 @@ import Frame from "./frame.vue";
 	}
 })
 export default class FL extends Vue {
-	private framesURLs: Array<Array<string>> = [];
-	private framesURL: Array<string> = [];
+	// private framesURLs: Array<Array<string>> = [];
+	// private framesURL: Array<string> = [];
+
+	private framesURLs: Immutable.List<
+		Immutable.List<string>
+	> = Immutable.List.of();
+	private framesURL: Immutable.List<string> = Immutable.List.of();
 
 	private width: number = 10;
 	private height: number = 10;
 	private nowFrame: number;
 	private channel: BroadcastChannel = new BroadcastChannel(window.name);
 	private scrollTop = 0;
+
+	private Immutable = Immutable;
 	mounted() {
 		// 接收到控制頁訊息時的反應
 		this.channel.onmessage = e => {
 			let data = <MessageEventDataOfFL>e.data;
 			switch (data.case) {
 				case "image": {
-					if (data.image.layer != -1) {
-						if (!this.framesURLs[data.image.frame]) {
-							this.$set(this.framesURLs, data.image.frame, []);
-						}
-						this.$set(
-							this.framesURLs[data.image.frame],
-							data.image.layer,
+					if (data.image.layer == -1) {
+						this.framesURL = this.framesURL.setIn(
+							[data.image.frame],
 							data.image.url
 						);
-						console.log(this.framesURLs);
+						this.framesURLs = this.framesURLs.setIn(
+							[data.image.frame],
+							(
+								this.framesURLs.get(data.image.frame) ||
+								Immutable.List.of()
+							).toList()
+						);
 					} else {
-						this.$set(
-							this.framesURL,
-							data.image.frame,
+						this.framesURLs = this.framesURLs.setIn(
+							[data.image.frame, data.image.layer],
 							data.image.url
 						);
 					}
@@ -158,6 +170,33 @@ export default class FL extends Vue {
 			requestAnimationFrame(scrollAnim);
 		};
 		scrollAnim();
+	}
+	addFrame(frame: number) {
+		return () => {
+			this.framesURLs = this.framesURLs.insert(
+				frame,
+				Immutable.List.of()
+			);
+			this.framesURL = this.framesURL.insert(frame, "");
+			this.channel.postMessage({
+				case: "add",
+				add: { frame: frame, layer: -1 }
+			});
+		};
+	}
+	addLayer(frame: number) {
+		return (layer: number) => {
+			return () => {
+				this.framesURLs = this.framesURLs.set(
+					frame,
+					this.framesURLs.get(frame).insert(layer, "")
+				);
+				this.channel.postMessage({
+					case: "add",
+					add: { frame: frame, layer: layer }
+				});
+			};
+		};
 	}
 }
 

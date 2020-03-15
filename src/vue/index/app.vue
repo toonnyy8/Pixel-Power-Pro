@@ -47,7 +47,7 @@ let overlap = (
 
 @Component
 export default class Frame extends Vue {
-	private frameImageData: Immutable.List<
+	private framesImageDatas: Immutable.List<
 		Immutable.List<ImageData>
 	> = Immutable.List.of(
 		// Immutable.List.of(new ImageData(10, 10), new ImageData(10, 10)),
@@ -56,9 +56,13 @@ export default class Frame extends Vue {
 		// Immutable.List.of(new ImageData(10, 10)),
 		// Immutable.List.of(new ImageData(10, 10)),
 		// Immutable.List.of(new ImageData(10, 10)),
-		Immutable.List.of(new ImageData(20, 10))
+		Immutable.List.of(new ImageData(20, 10), new ImageData(20, 10)),
+		Immutable.List.of()
 	);
-	private framesImageData: Immutable.List<ImageData> = Immutable.List.of();
+	private framesImageData: Immutable.List<ImageData> = Immutable.List.of(
+		new ImageData(20, 10),
+		new ImageData(20, 10)
+	);
 	private width = 20;
 	private height = 10;
 	private flChannel: BroadcastChannel;
@@ -75,7 +79,7 @@ export default class Frame extends Vue {
 			}
 		};
 
-		this.frameImageData.forEach((layerImageData, frame) => {
+		this.framesImageDatas.forEach((layerImageData, frame) => {
 			overlap(layerImageData, this.width, this.height).then(data => {
 				let imageData = new ImageData(this.width, this.height);
 				imageData.data.set(new Uint8ClampedArray(data));
@@ -97,7 +101,7 @@ export default class Frame extends Vue {
 		this.canvas.width = width;
 		this.canvas.height = height;
 		let ctx = this.canvas.getContext("2d");
-		this.frameImageData = this.frameImageData.map(layerImageData => {
+		this.framesImageDatas = this.framesImageDatas.map(layerImageData => {
 			return layerImageData.map(imageData => {
 				ctx.clearRect(0, 0, width, height);
 				ctx.putImageData(imageData, dx, dy);
@@ -122,19 +126,21 @@ export default class Frame extends Vue {
 								height: this.height
 							}
 						});
-						this.frameImageData.forEach((layerImageData, frame) => {
-							layerImageData.forEach((imageData, layer) => {
-								this.flChannel.postMessage({
-									case: "image",
-									image: {
-										frame: frame,
-										layer: layer,
-										url: this.toURL(imageData)
-									}
+						this.framesImageDatas.forEach(
+							(layerImageData, frame) => {
+								layerImageData.forEach((imageData, layer) => {
+									this.flChannel.postMessage({
+										case: "image",
+										image: {
+											frame: frame,
+											layer: layer,
+											url: this.toURL(imageData)
+										}
+									});
+									console.log("image");
 								});
-								console.log("image");
-							});
-						});
+							}
+						);
 						this.framesImageData.forEach((imageData, frame) => {
 							this.flChannel.postMessage({
 								case: "image",
@@ -154,6 +160,53 @@ export default class Frame extends Vue {
 						console.log("close");
 						break;
 					}
+					case "add": {
+						if (data.add.layer == -1) {
+							this.framesImageData = this.framesImageData.insert(
+								data.add.frame,
+								new ImageData(this.width, this.height)
+							);
+							this.framesImageDatas = this.framesImageDatas.insert(
+								data.add.frame,
+								Immutable.List.of()
+							);
+							this.flChannel.postMessage({
+								case: "image",
+								image: {
+									frame: data.add.frame,
+									layer: -1,
+									url: this.toURL(
+										this.framesImageData.get(data.add.frame)
+									)
+								}
+							});
+						} else {
+							this.framesImageDatas = this.framesImageDatas.set(
+								data.add.frame,
+								this.framesImageDatas
+									.get(data.add.frame)
+									.toList()
+									.insert(
+										data.add.layer,
+										new ImageData(this.width, this.height)
+									)
+							);
+							this.flChannel.postMessage({
+								case: "image",
+								image: {
+									frame: data.add.frame,
+									layer: data.add.layer,
+									url: this.toURL(
+										this.framesImageDatas.getIn([
+											data.add.frame,
+											data.add.layer
+										])
+									)
+								}
+							});
+						}
+						break;
+					}
 				}
 			};
 		}
@@ -161,7 +214,8 @@ export default class Frame extends Vue {
 }
 
 interface MessageEventDataOfFL {
-	case: "opened" | "close";
+	case: "opened" | "close" | "add";
+	add: { frame: number; layer: number };
 }
 </script>
 

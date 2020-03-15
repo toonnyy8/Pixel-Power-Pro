@@ -2,16 +2,18 @@
 	<div class>
 		<layer v-bind:width="width" v-bind:height="height" v-bind:url="frameURL"></layer>
 		<div class="w-64 h-auto max-h-full overflow-x-hidden overflow-y-auto rounded-b-lg shadow-lg">
-			<div v-for="(layerURL,layer) in layersURL" :key="layer">
+			<div v-for="(_,layer) in layersURL.size" :key="layer">
 				<div
 					class="flex justify-center cursor-pointer w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
+					@click="addLayer(layer)()"
 				>
 					<i class="text-md material-icons not-italic text-white">add</i>
 				</div>
-				<layer v-bind:width="width" v-bind:height="height" v-bind:url="layerURL"></layer>
+				<layer v-bind:width="width" v-bind:height="height" v-bind:url="layersURL.get(layer)"></layer>
 			</div>
 			<div
 				class="flex justify-center cursor-pointer w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
+				@click="addLayer(layersURL.size)()"
 			>
 				<i class="text-md material-icons not-italic text-white">add</i>
 			</div>
@@ -21,6 +23,7 @@
 </template>
 
 <script lang="ts">
+import * as Immutable from "immutable";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import Layer from "./layer.vue";
 @Component({
@@ -35,11 +38,16 @@ export default class Frame extends Vue {
 	@Prop(Number)
 	private height: number;
 
-	@Prop(Array)
-	private layersURL: Array<string>;
+	@Prop(Object)
+	private layersURL: Immutable.List<string>;
 
 	@Prop(String)
 	private frameURL: string;
+
+	@Prop(Function)
+	private addLayer: (layer: number) => () => void;
+
+	mounted() {}
 }
 </script>
 
