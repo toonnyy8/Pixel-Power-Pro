@@ -60,24 +60,57 @@ import Frame from "./frame.vue";
 	}
 })
 export default class FL extends Vue {
-	private frameImageDataURL: Array<Array<string>> = [];
-	private framesImageDataURL: Array<string> = [];
+	private framesURLs: Array<Array<string>> = [];
+	private framesURL: Array<string> = [];
 
-	private framesURLs: Array<Array<string>> = [
-		["", "", "", ""],
-		["", "", ""],
-		["", ""],
-		[""]
-	];
-	private framesURL: Array<string> = ["", "", "", ""];
-
-	private canvas: HTMLCanvasElement = document.createElement("canvas");
 	private width: number = 10;
 	private height: number = 10;
 	private nowFrame: number;
 	private channel: BroadcastChannel = new BroadcastChannel(window.name);
 	private scrollTop = 0;
 	mounted() {
+		this.channel.onmessage = e => {
+			let data = <MessageEventDataOfFL>e.data;
+			switch (data.case) {
+				case "image": {
+					if (data.image.layer != -1) {
+						if (!this.framesURLs[data.image.frame]) {
+							this.$set(this.framesURLs, data.image.frame, []);
+						}
+						this.$set(
+							this.framesURLs[data.image.frame],
+							data.image.layer,
+							data.image.url
+						);
+						console.log(this.framesURLs);
+					} else {
+						this.$set(
+							this.framesURL,
+							data.image.frame,
+							data.image.url
+						);
+					}
+					break;
+				}
+				case "size": {
+					this.width = data.size.width;
+					this.height = data.size.height;
+					break;
+				}
+				case "close": {
+					window.close();
+					break;
+				}
+			}
+		};
+		this.channel.postMessage({ case: "opened" });
+
+		window.onunload = () => {
+			this.channel.postMessage({ case: "close" });
+			window.close();
+			console.log("closed");
+		};
+
 		let deltaY = 0;
 		if (window.navigator.userAgent.indexOf("Chrome") > -1) {
 			(<HTMLElement>this.$refs["horizontalScroll"]).addEventListener(
