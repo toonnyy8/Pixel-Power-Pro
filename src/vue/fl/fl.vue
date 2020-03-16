@@ -39,6 +39,8 @@
 				v-bind:layersURL="framesURLs.get(frame)"
 				v-bind:frameURL="framesURL.get(frame)"
 				v-bind:addLayer="addLayer(frame)"
+				v-bind:move="move(frame)"
+				v-bind:isClick="isClick(frame)"
 			/>
 		</div>
 		<div class="inline-block self-start">
@@ -79,6 +81,12 @@ export default class FL extends Vue {
 	private scrollTop = 0;
 
 	private Immutable = Immutable;
+
+	private todoBuffer: Immutable.List<{
+		frame: number;
+		layer: number;
+		type: string;
+	}> = Immutable.List.of();
 	mounted() {
 		// 接收到控制頁訊息時的反應
 		this.channel.onmessage = e => {
@@ -195,6 +203,61 @@ export default class FL extends Vue {
 					case: "add",
 					add: { frame: frame, layer: layer }
 				});
+			};
+		};
+	}
+	move(frame: number) {
+		return (layer: number) => {
+			let bufferIsMoveFrame =
+				this.todoBuffer.get(0, {
+					frame: frame,
+					layer: layer,
+					type: "move"
+				}).layer == -1;
+			if (layer == -1) {
+				if (!bufferIsMoveFrame) {
+					this.todoBuffer = Immutable.List.of();
+				}
+			} else {
+				if (bufferIsMoveFrame) {
+					this.todoBuffer = Immutable.List.of();
+				}
+			}
+			return () => {
+				let todo = this.todoBuffer.find(todo => {
+					if (todo.frame == frame && todo.layer == layer) return true;
+					else return false;
+				});
+				let index = this.todoBuffer.indexOf(todo);
+				if (index == -1) {
+				} else {
+					this.todoBuffer = this.todoBuffer.remove(index);
+					if (todo.type == "copy") {
+						this.todoBuffer = this.todoBuffer.push({
+							frame: frame,
+							layer: layer,
+							type: "move"
+						});
+					}
+				}
+			};
+		};
+	}
+	isClick(frame: number) {
+		return (layer: number) => {
+			return (type: string) => {
+				return () => {
+					console.log(frame, layer, type);
+					return (
+						this.todoBuffer.find(todo => {
+							return (
+								todo.frame == frame &&
+								todo.layer == layer &&
+								todo.type == type
+							);
+						}) != undefined
+					);
+				};
 			};
 		};
 	}

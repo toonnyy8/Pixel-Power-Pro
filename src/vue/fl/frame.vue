@@ -1,6 +1,12 @@
 <template>
 	<div class>
-		<layer v-bind:width="width" v-bind:height="height" v-bind:url="frameURL"></layer>
+		<layer
+			v-bind:width="width"
+			v-bind:height="height"
+			v-bind:url="frameURL"
+			v-bind:move="move(-1)"
+			v-bind:isClick="isClick(-1)"
+		></layer>
 		<div class="w-64 h-auto max-h-full overflow-x-hidden overflow-y-auto rounded-b-lg shadow-lg">
 			<div v-for="(_,layer) in layersURL.size" :key="layer">
 				<div
@@ -9,7 +15,13 @@
 				>
 					<i class="text-md material-icons not-italic text-white">add</i>
 				</div>
-				<layer v-bind:width="width" v-bind:height="height" v-bind:url="layersURL.get(layer)"></layer>
+				<layer
+					v-bind:width="width"
+					v-bind:height="height"
+					v-bind:url="layersURL.get(layer)"
+					v-bind:move="move(layer)"
+					v-bind:isClick="isClick(layer)"
+				></layer>
 			</div>
 			<div
 				class="flex justify-center cursor-pointer w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
@@ -46,6 +58,12 @@ export default class Frame extends Vue {
 
 	@Prop(Function)
 	private addLayer: (layer: number) => () => void;
+
+	@Prop(Function)
+	private move: (layer: number) => () => void;
+
+	@Prop(Function)
+	private isClick: (layer: number) => (type: string) => () => void;
 
 	mounted() {}
 }
