@@ -5,7 +5,7 @@
 			v-bind:height="height"
 			v-bind:url="frameURL"
 			v-bind:move="move(-1)"
-			v-bind:isClick="isClick(-1)"
+			v-bind:todoType="todoType(-1)"
 		></layer>
 		<div class="w-64 h-auto max-h-full overflow-x-hidden overflow-y-auto rounded-b-lg shadow-lg">
 			<div v-for="(_,layer) in layersURL.size" :key="layer">
@@ -20,7 +20,7 @@
 					v-bind:height="height"
 					v-bind:url="layersURL.get(layer)"
 					v-bind:move="move(layer)"
-					v-bind:isClick="isClick(layer)"
+					v-bind:todoType="todoType(layer)"
 				></layer>
 			</div>
 			<div
@@ -63,7 +63,7 @@ export default class Frame extends Vue {
 	private move: (layer: number) => () => void;
 
 	@Prop(Function)
-	private isClick: (layer: number) => (type: string) => () => void;
+	private todoType: (layer: number) => (type: string) => () => void;
 
 	mounted() {}
 }

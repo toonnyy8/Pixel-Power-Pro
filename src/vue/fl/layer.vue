@@ -3,7 +3,7 @@
 		<div
 			class="self-center flex justify-center cursor-pointer rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl mr-4"
 			@click="move"
-			v-bind:class="{'bg-black':isClick('move')(), 'hover:bg-gray-600':isClick('move')(), 'active:bg-gray-800':isClick('move')()}"
+			v-bind:class="{'bg-green':todoType('move')(), 'hover:bg-green-600':todoType('move')(), 'active:bg-green-800':todoType('move')()}"
 		>
 			<i class="self-center text-md material-icons not-italic text-white">reply</i>
 		</div>
@@ -44,7 +44,7 @@ export default class Layer extends Vue {
 	private move: () => void;
 
 	@Prop(Function)
-	private isClick: (type: string) => () => void;
+	private todoType: (type: string) => () => void;
 
 	mounted() {
 		console.log(this.isClick);
