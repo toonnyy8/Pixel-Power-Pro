@@ -9,18 +9,6 @@ import * as Immutable from "immutable";
 import * as tfc from "@tensorflow/tfjs-core";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
-let a = Immutable.List.of(
-	{ a: 1, b: 2, c: "asd" },
-	{ a: 3, b: 2, c: "asd" },
-	{ a: 8, b: 2, c: "asd" }
-);
-console.log(
-	a.find(v => {
-		return false;
-	})
-);
-console.log(a.indexOf(undefined));
-
 let overlap = (
 	layerImageDate: Immutable.List<ImageData>,
 	width: number,

@@ -2,8 +2,8 @@
 	<div class="flex justify-center bg-gray-500 w-64 h-24 shadow-lg">
 		<div
 			class="self-center flex justify-center cursor-pointer rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl mr-4"
-			@click="move"
-			v-bind:class="{'bg-green':todoType('move')(), 'hover:bg-green-600':todoType('move')(), 'active:bg-green-800':todoType('move')()}"
+			@click="todo('move')"
+			v-bind:class="{'bg-green-600':todoType('move'), 'hover:bg-green-400':todoType('move'), 'active:bg-green-200':todoType('move')}"
 		>
 			<i class="self-center text-md material-icons not-italic text-white">reply</i>
 		</div>
@@ -21,6 +21,8 @@
 		</div>
 		<div
 			class="self-center flex justify-center cursor-pointer rounded-full w-8 h-8 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl ml-4"
+			@click="todo('copy')"
+			v-bind:class="{'bg-green-600':todoType('copy'), 'hover:bg-green-400':todoType('copy'), 'active:bg-green-200':todoType('copy')}"
 		>
 			<i class="self-center text-md material-icons not-italic text-white">filter_none</i>
 		</div>
@@ -41,14 +43,12 @@ export default class Layer extends Vue {
 	private url: string;
 
 	@Prop(Function)
-	private move: () => void;
+	private todo: (type: string) => void;
 
 	@Prop(Function)
-	private todoType: (type: string) => () => void;
+	private todoType: (type: string) => void;
 
-	mounted() {
-		console.log(this.isClick);
-	}
+	mounted() {}
 }
 </script>
 
