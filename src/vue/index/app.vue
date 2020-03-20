@@ -9,6 +9,8 @@ import * as Immutable from "immutable";
 import * as tfc from "@tensorflow/tfjs-core";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
+let a = Immutable.List.of();
+console.log(a.set(-1, 2).size);
 let overlap = (
 	layerImageDate: Immutable.List<ImageData>,
 	width: number,
@@ -49,20 +51,7 @@ let overlap = (
 export default class Frame extends Vue {
 	private framesImageDatas: Immutable.List<
 		Immutable.List<ImageData>
-	> = Immutable.List.of(
-		// Immutable.List.of(new ImageData(10, 10), new ImageData(10, 10)),
-		// Immutable.List.of(new ImageData(10, 10)),
-		// Immutable.List.of(new ImageData(10, 10)),
-		// Immutable.List.of(new ImageData(10, 10)),
-		// Immutable.List.of(new ImageData(10, 10)),
-		// Immutable.List.of(new ImageData(10, 10)),
-		Immutable.List.of(new ImageData(20, 10), new ImageData(20, 10)),
-		Immutable.List.of()
-	);
-	private framesImageData: Immutable.List<ImageData> = Immutable.List.of(
-		new ImageData(20, 10),
-		new ImageData(20, 10)
-	);
+	> = Immutable.List.of();
 	private width = 20;
 	private height = 10;
 	private flChannel: BroadcastChannel;
@@ -71,6 +60,16 @@ export default class Frame extends Vue {
 	};
 	private canvas: HTMLCanvasElement = document.createElement("canvas");
 	mounted() {
+		{
+			this.framesImageDatas = this.framesImageDatas
+				.setIn([0, -1], new ImageData(this.width, this.height))
+				.setIn([1, -1], new ImageData(this.width, this.height))
+				.setIn([1, 0], new ImageData(this.width, this.height))
+				.setIn([1, 1], new ImageData(this.width, this.height))
+				.setIn([2, -1], new ImageData(this.width, this.height))
+				.setIn([2, 0], new ImageData(this.width, this.height));
+		}
+
 		window.name = "aaa";
 		this.resize(this.width, this.height, 0, 0);
 		window.onunload = () => {
@@ -80,14 +79,16 @@ export default class Frame extends Vue {
 		};
 
 		this.framesImageDatas.forEach((layerImageData, frame) => {
-			overlap(layerImageData, this.width, this.height).then(data => {
-				let imageData = new ImageData(this.width, this.height);
-				imageData.data.set(new Uint8ClampedArray(data));
-				this.framesImageData = this.framesImageData.setIn(
-					[frame],
-					imageData
-				);
-			});
+			overlap(layerImageData.remove(-1), this.width, this.height).then(
+				data => {
+					let imageData = new ImageData(this.width, this.height);
+					imageData.data.set(new Uint8ClampedArray(data));
+					this.framesImageDatas = this.framesImageDatas.setIn(
+						[frame, -1],
+						imageData
+					);
+				}
+			);
 		});
 	}
 	toURL(imageData: ImageData) {
@@ -141,16 +142,6 @@ export default class Frame extends Vue {
 								});
 							}
 						);
-						this.framesImageData.forEach((imageData, frame) => {
-							this.flChannel.postMessage({
-								case: "image",
-								image: {
-									frame: frame,
-									layer: -1,
-									url: this.toURL(imageData)
-								}
-							});
-						});
 
 						break;
 					}
@@ -162,13 +153,14 @@ export default class Frame extends Vue {
 					}
 					case "add": {
 						if (data.add.layer == -1) {
-							this.framesImageData = this.framesImageData.insert(
-								data.add.frame,
-								new ImageData(this.width, this.height)
-							);
 							this.framesImageDatas = this.framesImageDatas.insert(
 								data.add.frame,
-								Immutable.List.of()
+								<Immutable.List<ImageData>>(
+									Immutable.List.of().set(
+										-1,
+										new ImageData(this.width, this.height)
+									)
+								)
 							);
 							this.flChannel.postMessage({
 								case: "image",
@@ -176,7 +168,10 @@ export default class Frame extends Vue {
 									frame: data.add.frame,
 									layer: -1,
 									url: this.toURL(
-										this.framesImageData.get(data.add.frame)
+										this.framesImageDatas.getIn([
+											data.add.frame,
+											-1
+										])
 									)
 								}
 							});
@@ -215,7 +210,15 @@ export default class Frame extends Vue {
 
 interface MessageEventDataOfFL {
 	case: "opened" | "close" | "add";
-	add: { frame: number; layer: number };
+	add: {
+		frame: number;
+		layer: number;
+		todo: Array<{
+			frame: number;
+			layer: number;
+			type: string;
+		}>;
+	};
 }
 </script>
 

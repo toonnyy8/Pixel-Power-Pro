@@ -181,14 +181,13 @@ export default class FL extends Vue {
 		scrollAnim();
 	}
 	addFrame(frame: number) {
-		this.todoBuffer = Immutable.List.of();
-
 		this.framesURLs = this.framesURLs.insert(frame, Immutable.List.of());
 		this.framesURL = this.framesURL.insert(frame, "");
 		this.channel.postMessage({
 			case: "add",
-			add: { frame: frame, layer: -1 }
+			add: { frame: frame, layer: -1, todo: this.todoBuffer.toArray() }
 		});
+		this.todoBuffer = Immutable.List.of();
 	}
 	addLayer(frame: number) {
 		return (layer: number) => {
