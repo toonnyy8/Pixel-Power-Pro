@@ -1,60 +1,60 @@
 <template>
-<body>
-	<div
-		ref="horizontalScroll"
-		class="fixed flex w-screen h-24"
-		v-bind:style="`transform:translate(0, ${-scrollTop}px);`"
-	>
+	<div ref="root" class="overflow-x-auto w-screen h-screen">
 		<div
-			class="self-center flex justify-center cursor-pointer rounded-full w-16 h-16 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg ml-4"
+			ref="horizontalScroll"
+			class="fixed flex w-screen h-24"
+			v-bind:style="`transform:translate(0, ${-scrollTop}px);`"
 		>
-			<i class="self-center text-4xl material-icons not-italic text-white">delete_forever</i>
+			<div
+				class="self-center flex justify-center cursor-pointer rounded-full w-16 h-16 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg ml-4"
+			>
+				<i class="self-center text-4xl material-icons not-italic text-white">delete_forever</i>
+			</div>
 		</div>
-	</div>
-	<div class="h-24"></div>
-	<div
-		class="fixed flex rounded-r-lg w-64 h-64"
-		v-bind:style="`transform:translate(0, ${-scrollTop}px);`"
-	>
-		<img
-			class="self-start pixel min-w-full h-auto rounded-r-lg shadow-lg"
-			src="./ms_twbb_pc_2560x1600.png"
-		/>
-	</div>
-	<div class="whitespace-no-wrap flex ml-64">
-		<div class="flex" v-for="(_, frame) in framesURLs.size" :key="frame">
-			<div class="inline-block self-start">
-				<div
-					class="flex justify-center items-center cursor-pointer w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl"
-					v-bind:class="{
+		<div class="pt-24"></div>
+		<div
+			class="fixed flex rounded-r-lg w-64 h-64"
+			v-bind:style="`transform:translate(0, ${-scrollTop}px);`"
+		>
+			<img
+				class="self-start pixel min-w-full h-auto rounded-r-lg shadow-lg"
+				src="./ms_twbb_pc_2560x1600.png"
+			/>
+		</div>
+		<div class="whitespace-no-wrap flex ml-64">
+			<div class="flex" v-for="(_, frame) in framesURLs.size" :key="frame">
+				<div class="inline-block self-start">
+					<div
+						class="flex justify-center items-center cursor-pointer w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl"
+						v-bind:class="{
                             'rounded-l-lg': frame == 0,
                             'ml-12': frame == 0
                         }"
-					@click="addFrame(frame)"
+						@click="addFrame(frame)"
+					>
+						<i class="text-md material-icons not-italic text-white">add</i>
+					</div>
+				</div>
+				<frame
+					class="inline-block self-start h-screen-s-56 min-h-32"
+					v-bind:width="width"
+					v-bind:height="height"
+					v-bind:layersURL="framesURLs.get(frame)"
+					v-bind:addLayer="addLayer(frame)"
+					v-bind:todo="todo(frame)"
+					v-bind:todoType="todoType(frame)"
+				/>
+			</div>
+			<div class="inline-block self-start">
+				<div
+					class="flex justify-center items-center cursor-pointer w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl mr-12 rounded-r-lg"
+					@click="addFrame(framesURLs.size)"
 				>
 					<i class="text-md material-icons not-italic text-white">add</i>
 				</div>
 			</div>
-			<frame
-				class="inline-block self-start h-screen-s-56 min-h-32"
-				v-bind:width="width"
-				v-bind:height="height"
-				v-bind:layersURL="framesURLs.get(frame)"
-				v-bind:addLayer="addLayer(frame)"
-				v-bind:todo="todo(frame)"
-				v-bind:todoType="todoType(frame)"
-			/>
-		</div>
-		<div class="inline-block self-start">
-			<div
-				class="flex justify-center items-center cursor-pointer w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl mr-12 rounded-r-lg"
-				@click="addFrame(framesURLs.size)"
-			>
-				<i class="text-md material-icons not-italic text-white">add</i>
-			</div>
 		</div>
 	</div>
-</body>
 </template>
 
 <script lang="ts">
@@ -126,45 +126,28 @@ export default class FL extends Vue {
 
 		// 當於 horizontalScroll 上發生滾動事件時，讓頁面左右滾動
 		let deltaY = 0;
-		if (window.navigator.userAgent.indexOf("Chrome") > -1) {
-			(<HTMLElement>this.$refs["horizontalScroll"]).addEventListener(
-				"wheel",
-				e => {
-					e.preventDefault();
-					deltaY = (<WheelEvent>e).deltaY;
-					if (deltaY != 0) {
-						requestAnimationFrame(() => {
-							deltaY = (50 * deltaY) / Math.abs(deltaY);
-							if (!Number.isNaN(deltaY)) {
-								document.documentElement.scrollLeft += deltaY;
-							}
-							deltaY = 0;
-						});
-					}
+		(<HTMLElement>this.$refs["horizontalScroll"]).addEventListener(
+			"wheel",
+			e => {
+				e.preventDefault();
+				deltaY = (<WheelEvent>e).deltaY;
+				if (deltaY != 0) {
+					requestAnimationFrame(() => {
+						deltaY = (50 * deltaY) / Math.abs(deltaY);
+						if (!Number.isNaN(deltaY)) {
+							(<HTMLElement>(
+								this.$refs["root"]
+							)).scrollLeft += deltaY;
+						}
+						deltaY = 0;
+					});
 				}
-			);
-		} else if (window.navigator.userAgent.indexOf("Firefox") > -1) {
-			(<HTMLElement>this.$refs["horizontalScroll"]).addEventListener(
-				"wheel",
-				e => {
-					e.preventDefault();
-					deltaY = (<WheelEvent>e).deltaY;
-					if (deltaY != 0) {
-						requestAnimationFrame(() => {
-							deltaY = (50 * deltaY) / Math.abs(deltaY);
-							if (!Number.isNaN(deltaY)) {
-								document.documentElement.scrollLeft += deltaY;
-							}
-							deltaY = 0;
-						});
-					}
-				}
-			);
-		}
+			}
+		);
 
 		// 使 horizontalScroll、按鍵與展示區會隨著上下滾動而偏移
 		let scrollAnim = () => {
-			this.scrollTop = document.documentElement.scrollTop;
+			this.scrollTop = (<HTMLElement>this.$refs["root"]).scrollTop;
 			requestAnimationFrame(scrollAnim);
 		};
 		scrollAnim();
