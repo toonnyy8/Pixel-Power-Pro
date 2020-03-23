@@ -22,7 +22,7 @@
 		/>
 	</div>
 	<div class="whitespace-no-wrap flex ml-64">
-		<div class="flex" v-for="(_, frame) in framesURL.size" :key="frame">
+		<div class="flex" v-for="(_, frame) in framesURLs.size" :key="frame">
 			<div class="inline-block self-start">
 				<div
 					class="flex justify-center items-center cursor-pointer w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl"
@@ -40,7 +40,6 @@
 				v-bind:width="width"
 				v-bind:height="height"
 				v-bind:layersURL="framesURLs.get(frame)"
-				v-bind:frameURL="framesURL.get(frame)"
 				v-bind:addLayer="addLayer(frame)"
 				v-bind:todo="todo(frame)"
 				v-bind:todoType="todoType(frame)"
@@ -49,7 +48,7 @@
 		<div class="inline-block self-start">
 			<div
 				class="flex justify-center items-center cursor-pointer w-8 h-24 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-lg hover:shadow-2xl active:shadow-xl mr-12 rounded-r-lg"
-				@click="addFrame(framesURL.toList().size)"
+				@click="addFrame(framesURLs.size)"
 			>
 				<i class="text-md material-icons not-italic text-white">add</i>
 			</div>
@@ -72,7 +71,6 @@ export default class FL extends Vue {
 	private framesURLs: Immutable.List<
 		Immutable.List<string>
 	> = Immutable.List.of();
-	private framesURL: Immutable.List<string> = Immutable.List.of();
 
 	private width: number = 10;
 	private height: number = 10;
@@ -94,24 +92,15 @@ export default class FL extends Vue {
 			let data = <MessageEventDataOfFL>e.data;
 			switch (data.case) {
 				case "image": {
-					if (data.image.layer == -1) {
-						this.framesURL = this.framesURL.setIn(
-							[data.image.frame],
-							data.image.url
-						);
-						this.framesURLs = this.framesURLs.setIn(
-							[data.image.frame],
-							(
-								this.framesURLs.get(data.image.frame) ||
-								Immutable.List.of()
-							).toList()
-						);
-					} else {
-						this.framesURLs = this.framesURLs.setIn(
-							[data.image.frame, data.image.layer],
-							data.image.url
-						);
-					}
+					this.framesURLs = this.framesURLs.set(
+						data.image.frame,
+						(
+							this.framesURLs.get(data.image.frame) ||
+							Immutable.List.of()
+						)
+							.toList()
+							.set(data.image.layer, data.image.url)
+					);
 					break;
 				}
 				case "size": {
@@ -181,11 +170,13 @@ export default class FL extends Vue {
 		scrollAnim();
 	}
 	addFrame(frame: number) {
-		this.framesURLs = this.framesURLs.insert(frame, Immutable.List.of());
-		this.framesURL = this.framesURL.insert(frame, "");
+		this.framesURLs = this.framesURLs.insert(
+			frame,
+			(<Immutable.List<string>>Immutable.List.of()).set(0, "")
+		);
 		this.channel.postMessage({
 			case: "add",
-			add: { frame: frame, layer: -1, todo: this.todoBuffer.toArray() }
+			add: { frame: frame, layer: 0, todo: this.todoBuffer.toArray() }
 		});
 		this.todoBuffer = Immutable.List.of();
 	}
@@ -207,8 +198,8 @@ export default class FL extends Vue {
 		return (layer: number) => {
 			return (type: string) => {
 				if (
-					(layer == -1) /* */ !=
-					(this.todoBuffer.get(0, { layer: layer }).layer == -1)
+					(layer == 0) /* */ !=
+					(this.todoBuffer.get(0, { layer: layer }).layer == 0)
 				) {
 					this.todoBuffer = Immutable.List.of();
 				}

@@ -3,12 +3,12 @@
 		<layer
 			v-bind:width="width"
 			v-bind:height="height"
-			v-bind:url="frameURL"
-			v-bind:todo="todo(-1)"
-			v-bind:todoType="todoType(-1)"
+			v-bind:url="layersURL.get(0)"
+			v-bind:todo="todo(0)"
+			v-bind:todoType="todoType(0)"
 		></layer>
 		<div class="w-64 h-auto max-h-full overflow-x-hidden overflow-y-auto rounded-b-lg shadow-lg">
-			<div v-for="(_,layer) in layersURL.size" :key="layer">
+			<div v-for="layer in (layersURL.size-1)" :key="layer">
 				<div
 					class="flex justify-center cursor-pointer w-64 h-6 transition duration-500 ease-out bg-black hover:bg-gray-600 active:bg-gray-800 shadow-xs hover:shadow-xl active:shadow-lg"
 					@click="addLayer(layer)"
@@ -52,9 +52,6 @@ export default class Frame extends Vue {
 
 	@Prop(Object)
 	private layersURL: Immutable.List<string>;
-
-	@Prop(String)
-	private frameURL: string;
 
 	@Prop(Function)
 	private addLayer: (layer: number) => void;

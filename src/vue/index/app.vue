@@ -10,7 +10,7 @@ import * as tfc from "@tensorflow/tfjs-core";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 let a = Immutable.List.of();
-console.log(a.set(-1, 2).size);
+console.log(a.set(0, 2).size);
 let overlap = (
 	layerImageDate: Immutable.List<ImageData>,
 	width: number,
@@ -49,6 +49,10 @@ let overlap = (
 
 @Component
 export default class Frame extends Vue {
+	/* [frame, layer]
+	 * layer = 0, 存放該 frame 的疊加圖
+	 * 其他存放每個 layer
+	 */
 	private framesImageDatas: Immutable.List<
 		Immutable.List<ImageData>
 	> = Immutable.List.of();
@@ -62,12 +66,12 @@ export default class Frame extends Vue {
 	mounted() {
 		{
 			this.framesImageDatas = this.framesImageDatas
-				.setIn([0, -1], new ImageData(this.width, this.height))
-				.setIn([1, -1], new ImageData(this.width, this.height))
+				.setIn([0, 0], new ImageData(this.width, this.height))
 				.setIn([1, 0], new ImageData(this.width, this.height))
 				.setIn([1, 1], new ImageData(this.width, this.height))
-				.setIn([2, -1], new ImageData(this.width, this.height))
-				.setIn([2, 0], new ImageData(this.width, this.height));
+				.setIn([1, 2], new ImageData(this.width, this.height))
+				.setIn([2, 0], new ImageData(this.width, this.height))
+				.setIn([2, 1], new ImageData(this.width, this.height));
 		}
 
 		window.name = "aaa";
@@ -79,12 +83,12 @@ export default class Frame extends Vue {
 		};
 
 		this.framesImageDatas.forEach((layerImageData, frame) => {
-			overlap(layerImageData.remove(-1), this.width, this.height).then(
+			overlap(layerImageData.remove(0), this.width, this.height).then(
 				data => {
 					let imageData = new ImageData(this.width, this.height);
 					imageData.data.set(new Uint8ClampedArray(data));
 					this.framesImageDatas = this.framesImageDatas.setIn(
-						[frame, -1],
+						[frame, 0],
 						imageData
 					);
 				}
@@ -152,25 +156,25 @@ export default class Frame extends Vue {
 						break;
 					}
 					case "add": {
-						if (data.add.layer == -1) {
+						if (data.add.layer == 0) {
 							this.framesImageDatas = this.framesImageDatas.insert(
 								data.add.frame,
-								<Immutable.List<ImageData>>(
-									Immutable.List.of().set(
-										-1,
-										new ImageData(this.width, this.height)
-									)
+								(<Immutable.List<ImageData>>(
+									Immutable.List.of()
+								)).set(
+									0,
+									new ImageData(this.width, this.height)
 								)
 							);
 							this.flChannel.postMessage({
 								case: "image",
 								image: {
 									frame: data.add.frame,
-									layer: -1,
+									layer: 0,
 									url: this.toURL(
 										this.framesImageDatas.getIn([
 											data.add.frame,
-											-1
+											0
 										])
 									)
 								}

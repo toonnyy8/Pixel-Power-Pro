@@ -690,5 +690,5 @@ module.exports = {
     transitionDuration: ['responsive'],
   },
   corePlugins: {},
-  plugins: [],
+  plugins: [require("neomorphism-in-tailwind")],
 }
