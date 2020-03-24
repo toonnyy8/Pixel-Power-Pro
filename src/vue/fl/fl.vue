@@ -2,7 +2,7 @@
 	<div ref="root" class="overflow-x-auto w-screen h-screen">
 		<div
 			ref="horizontalScroll"
-			class="fixed flex w-screen h-24"
+			class="fixed flex h-24"
 			v-bind:style="`transform:translate(0, ${-scrollTop}px);`"
 		>
 			<div
@@ -11,7 +11,7 @@
 				<i class="self-center text-4xl material-icons not-italic text-white">delete_forever</i>
 			</div>
 		</div>
-		<div class="pt-24"></div>
+		<div class="h-24"></div>
 		<div
 			class="fixed flex rounded-r-lg w-64 h-64"
 			v-bind:style="`transform:translate(0, ${-scrollTop}px);`"
@@ -126,9 +126,13 @@ export default class FL extends Vue {
 
 		// 當於 horizontalScroll 上發生滾動事件時，讓頁面左右滾動
 		let deltaY = 0;
-		(<HTMLElement>this.$refs["horizontalScroll"]).addEventListener(
-			"wheel",
-			e => {
+		(<HTMLElement>this.$refs["root"]).addEventListener("wheel", e => {
+			if (
+				(<WheelEvent>e).clientY <
+				(<HTMLElement>this.$refs["horizontalScroll"]).offsetHeight -
+					(<HTMLElement>this.$refs["root"]).scrollTop
+			) {
+				console.log((<HTMLElement>this.$refs["root"]).scrollTop);
 				e.preventDefault();
 				deltaY = (<WheelEvent>e).deltaY;
 				if (deltaY != 0) {
@@ -143,7 +147,7 @@ export default class FL extends Vue {
 					});
 				}
 			}
-		);
+		});
 
 		// 使 horizontalScroll、按鍵與展示區會隨著上下滾動而偏移
 		let scrollAnim = () => {
