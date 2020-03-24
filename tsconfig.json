@@ -1,5 +1,5 @@
 {
     "files": [
-        "./static/types/vue-shims.d.ts"
+        "src/vue/vue-shims.d.ts"
     ]
 }
