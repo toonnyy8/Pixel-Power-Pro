@@ -6,6 +6,7 @@
 
 <script lang="ts">
 import Frame from "./app_";
+console.log(Frame);
 export default Frame;
 </script>
 
