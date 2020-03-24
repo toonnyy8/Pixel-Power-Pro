@@ -1,5 +1,5 @@
 import * as Immutable from "immutable";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import Frame from "./frame.vue";
 
 @Component({
