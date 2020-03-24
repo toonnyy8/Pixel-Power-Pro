@@ -1,5 +1,11 @@
 {
     "files": [
-        "src/vue/vue-shims.d.ts"
+        "static/types/vue-shim.d.ts"
+    ],
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
     ]
 }
