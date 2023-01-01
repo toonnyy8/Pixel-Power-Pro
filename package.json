@@ -29,7 +29,7 @@
     "idb": "^5.0.1",
     "immutable": "^4.0.0-rc.12",
     "neomorphism-in-tailwind": "^1.1.5",
-    "parcel": "^1.12.4",
+    "parcel": "^2.8.2",
     "path": "^0.12.7",
     "pixi.js": "^5.2.1",
     "regenerator-runtime": "^0.13.3",
